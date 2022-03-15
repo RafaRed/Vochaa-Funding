@@ -17,17 +17,17 @@ function App() {
 				<div className="card1">
 					<Card
 						img="images/avatar1.png"
-						name="Add a Project"
-						desc="Set up Quadratic Voting for a project."
+						name="Add a Contest"
+						desc="Set up a Quadratic Voting Contest."
 						button="CREATE"
-						link="create-project"
+						link="create-contest"
 					/>
 				</div>
 				<div className="card2">
 					<Card
 						img="images/avatar2.png"
-						name="Explore Projects"
-						desc="Discover the projects and help by voting."
+						name="Explore Contests"
+						desc="Discover the contests and help by voting."
 						button="EXPLORE"
 						link="/explore"
 					/>

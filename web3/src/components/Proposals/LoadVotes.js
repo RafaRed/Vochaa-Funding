@@ -51,7 +51,7 @@ function GetProposal(db, params, setProposal, setCredits, setCurrentCredits) {
 
 function GetProject(params, setProject) {
 	const db = getDatabase();
-	const starCountRef = ref(db, "projects/" + params.project);
+	const starCountRef = ref(db, "contest/" + params.project);
 	onValue(starCountRef, (snapshot) => {
 		const data = snapshot.val();
 		setProject(data);

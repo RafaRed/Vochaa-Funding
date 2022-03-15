@@ -183,3 +183,44 @@
   width: 24px;
   margin-right: 10px;
 }
+
+
+.project .block-image {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border-radius: 10px;
+  margin-top: 30px;
+  padding: 30px;
+  gap: 20px;
+}
+
+.project .block-image-title {
+}
+
+.project .lazy-image{
+  height: 125px;
+  width: 125px;
+  min-width: 125px;
+  
+  background-color: #ececec;
+  border-radius: 10px;
+}
+
+.project .block-image-description {
+  margin-bottom: 10px;
+}
+
+.project .block-image .content{
+  width: 100%;
+}
+.project .block-image-input {
+  width: 90%;
+  height: 30px;
+  background-color: #ececec;
+  border: none;
+  border-radius: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  outline: none;
+}

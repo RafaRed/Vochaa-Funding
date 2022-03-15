@@ -32,7 +32,7 @@ async function submitProposal(
 		sender: wallet,
 	});
 
-	window.location.href = "/project" + "/" + address + "/" + doc.key;
+	window.location.href = "/contest" + "/" + address + "/" + doc.key;
 }
 export function ValidadeAndSubmitButton(props) {
 	console.log(props.options);

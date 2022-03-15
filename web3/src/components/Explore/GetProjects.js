@@ -4,7 +4,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 export function GetProjects(setProjects) {
 	useEffect(() => {
 		const db = getDatabase();
-		const starCountRef = ref(db, "projects/");
+		const starCountRef = ref(db, "contest/");
 		onValue(starCountRef, (snapshot) => {
 			const data = snapshot.val();
 			const projectList = {};

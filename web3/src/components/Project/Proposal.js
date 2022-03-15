@@ -3,7 +3,7 @@ import moment from "moment";
 
 export function Proposal(props) {
 	return (
-		<a href={"/project/" + props.address + "/" + props.pkey}>
+		<a href={"/contest/" + props.address + "/" + props.pkey}>
 			<div className="proposal">
 				<div className="line">
 					<p className="name">{props.proposal.name}</p>

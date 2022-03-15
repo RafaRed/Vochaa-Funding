@@ -9,7 +9,7 @@ export function CreateBoard(props) {
 			if (props.search == undefined ||
 				item["name"].toLowerCase().startsWith(props.search.toLowerCase())) {
 				const project = (
-					<Link to={"/project/" + props.projects[key].address} key={item["name"]}>
+					<Link to={"/contest/" + props.projects[key].address} key={item["name"]}>
 						<div className={[props.classes.app, "app"].join(" ")}>
 							<div className="app-logo">
 								<img src={item["logo"]} />

@@ -18,7 +18,7 @@ function Navbar(props) {
   return <div className="topnav">
   <div className='menu'>
   <a className={props.menu === "home" ? "active" : ""} href="/">HOME</a>
-  <a className={props.menu === "explore" ? "active" : ""} href="/explore">PROJECTS</a>
+  <a className={props.menu === "explore" ? "active" : ""} href="/explore">CONTESTS</a>
   <a className={props.menu === "about" ? "active" : ""} href="https://github.com/RafaRed/Vochaa">ABOUT</a>
   </div>
  

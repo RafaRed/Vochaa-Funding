@@ -10,7 +10,7 @@ export function AddProjectButton({
 			status === "Done") {
 			addProject(appData, wallet);
 		} else {
-			alert("cannot add this project.");
+			alert("cannot add this contest.");
 		}
 	};
 
@@ -28,7 +28,7 @@ export function AddProjectButton({
 					? "add-button-off"
 					: "add-button",
 			].join(" ")}>
-			ADD THIS PROJECT
+			ADD THIS CONTEST
 		</button>
 	);
 }
@@ -43,5 +43,5 @@ async function addProject(appData, wallet) {
 		sender: wallet,
 	});
 
-	window.location.href = "/project" + "/" + appData.contract;
+	window.location.href = "/contest" + "/" + appData.contract;
 }
