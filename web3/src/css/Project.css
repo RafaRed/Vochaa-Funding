@@ -1,0 +1,162 @@
+.proj {
+  display: flex;
+  justify-content: center;
+}
+.wrapper {
+  width: 30%;
+  min-width: 400px;
+}
+
+.proj .centred-block {
+  display: flex;
+  background-color: #fff;
+  border-radius: 10px;
+  margin-top: 30px;
+  padding: 30px;
+    justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.proj .app-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+  background-color: #ececec;
+  overflow: hidden;
+}
+
+.app-logo img {
+  width: 90px;
+  height: 90px;
+}
+.proj .line {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+  }
+
+.proj .app-name {
+  margin-right: 10px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.proj .app-symbol {
+  font-size: 24px;
+  font-weight: 700;
+}
+.proj .app-contract {
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+}
+
+.proj .app-contract p {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.proj .add-button {
+    margin-top: 20px;
+    width: 70%;
+    height: 60px;
+    border-radius: 10px;
+    border: none;
+    background-color: #3191ff;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    align-items: center;
+    line-height: 60px;
+
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+
+    
+  }
+.proj a{
+  text-decoration: none;
+}
+  .proposals{
+      margin-top: 20px;
+      color:#fff;
+      text-align: center;
+      font-weight: 700;
+      font-size: 24px;
+  }
+
+  .proj .proposal {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 10px;
+    margin-top: 30px;
+    padding: 30px;
+    color:#000
+
+  }
+  .proj .proposal .description{
+    margin-top: 10px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #ECECEC;
+  }
+  
+  .proj .line{
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .proj .status{
+    font-size: 20;
+    width: 80px;
+    text-align: center;
+    color:#fff;
+    
+    border-radius: 10px;
+  }
+
+  .proj .ended{
+    background-color: #FF8282;
+  }
+
+  .proj .running{
+    background-color: #00D488;
+  }
+
+  .proj .waiting{
+    background-color: #d6d6d6;
+  }
+
+  .proj .result{
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #B0B0B0;
+  }
+
+  .proj .result-winner{
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #19B57D;
+  }
+
+  .proj .winner-icon{
+    margin-right: 10px;
+    height: 24px;
+    width: 24px;
+  }
+
+  .proj .winner-line{
+    display: flex;
+  }

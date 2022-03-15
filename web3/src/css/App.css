@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700");
+* {
+  font-family: "Poppins";
+}
+body {
+  background-color: #8dbbf1;
+}
+
+.App .header {
+  margin-top: 90px;
+  margin-left: 100px;
+  display: flex;
+  flex-direction: row;
+}
+
+.App .title {
+  font-size: 3.5rem;
+  font-weight: 300;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+.App .span,
+.App .app-name {
+  font-weight: 700;
+  color: #e7f1fe;
+}
+.App .description {
+  margin-bottom: 20px;
+}
+.App .horizontalBar {
+  background-color: #447cbe;
+  width: 12px;
+  margin-right: 30px;
+}
+.App .card1 {
+  margin-left: 100px;
+}
+.App .card2 {
+  margin-left: 100px;
+}
+
+
+.App .cards {
+  flex-wrap: wrap;
+  padding-top: 100px;
+  display: flex;
+  row-gap:100px;
+  
+}

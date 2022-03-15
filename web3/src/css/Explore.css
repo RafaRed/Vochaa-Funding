@@ -1,0 +1,118 @@
+.explore {
+	display: flex;
+	justify-content: center;
+}
+
+.explore .title {
+	margin-top: 60px;
+	color: #ffffff;
+	font-size: 3.5rem;
+	font-weight: 700;
+	margin-bottom: 20px;
+}
+
+.explore .description {
+	font-size: 18px;
+	text-align: center;
+	width: 48%;
+}
+.explore .wrapper {
+	width: 70%;
+}
+
+.explore .header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.explore .link {
+	color: #ffffff;
+	text-decoration: none;
+}
+
+.explore .app {
+	display: flex;
+	width: 190px;
+	height: 190px;
+	border-radius: 10px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	text-align: center;
+	font-weight: 700;
+	color: #ffffff;
+	background-color: #95c3f7;
+	box-shadow: 12px 21px 20px 0px rgba(0, 0, 0, 0.15);
+	text-decoration: none;
+}
+
+.explore .app-logo {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100px;
+	height: 100px;
+	border-radius: 10px;
+	background-color: #ececec;
+	overflow: hidden;
+}
+
+.explore a {
+	text-decoration: none;
+}
+
+.explore .app-name {
+	margin-top: 10px;
+	height: 45px;
+	width: 120px;
+	font-size: 15px;
+}
+
+.explore .app-logo img {
+	width: 150px;
+	height: 140px;
+}
+
+.explore .board {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 60px;
+	margin-top: 150px;
+	margin-bottom: 150px;
+}
+
+.explore .block-input {
+	width: 100%;
+	background-color: #ececec;
+	height: 30px;
+	border: none;
+	outline: none;
+  margin-right: 10px;
+  padding-left: 10px;
+	padding-right: 10px;
+}
+
+.explore .search-bar {
+	width: 70%;
+	max-width: 500px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	background-color: #ececec;
+	border: none;
+	border-radius: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	display: flex;
+
+	align-items: center;
+
+}
+
+.explore .search-bar img{
+
+  width: 18px;
+  height: 18px;
+}
