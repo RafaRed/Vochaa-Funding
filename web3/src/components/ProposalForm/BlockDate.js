@@ -5,8 +5,8 @@ import moment from "moment";
 export function BlockDate(props) {
 	return (
 		<div className="block">
-			<h1 className="title">When is it going to happen?</h1>
-			<p className="description">Select an start date</p>
+			<h2 className="block-title">When is it going to happen?</h2>
+			<p className="block-description">Select an start date</p>
 			<div className="input-day">
 				<Datetime
 					isValidDate={(current) => valid(current, props.endDate)}
@@ -14,7 +14,7 @@ export function BlockDate(props) {
 					onC />
 			</div>
 
-			<p className="description">Select an ending date</p>
+			<p className="block-description">Select an ending date</p>
 			<div className="input-day">
 				<Datetime
 					isValidDate={(current) => validFrom(current, props.startDate)}

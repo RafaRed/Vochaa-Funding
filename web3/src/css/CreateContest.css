@@ -39,6 +39,7 @@
 }
 
 .project .block-title {
+  margin-bottom: 5px;
 }
 .project .block-description {
   margin-bottom: 10px;
@@ -223,4 +224,21 @@
   padding-left: 15px;
   padding-right: 15px;
   outline: none;
+}
+
+.project .add-button-mini {
+  margin-top: 20px;
+  width: 75%;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background-color: #3191ff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.project .input-day{
+  margin-top: -10px;
+  margin-bottom: 10px;
 }
