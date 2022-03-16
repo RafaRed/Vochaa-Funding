@@ -5,7 +5,7 @@ export function AddContest(props) {
 		<p className="description">
 			or{" "}
 			<a className={props.links} href="/create-contest">
-				add a contest
+				create a contest
 			</a>
 		</p>
 	);

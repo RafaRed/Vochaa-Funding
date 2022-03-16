@@ -1,14 +1,19 @@
-import React from "react";
+import React, {useState,useEffect} from "react";
 import { getDatabase, ref, set, onValue } from "firebase/database";
 import moment from "moment";
 
 export function AddProjectButton({
-	username, contest, buttonStyle,startDate,endDate
+	username, contest, buttonStyle,startDate,endDate,dataChanged,setDataChanged
 }) {
+	const [valid,setValid] = useState(false)
 
 	const requestProjectCreation = () => {
 		addProject(contest, username,startDate,endDate);
 	};
+
+	useEffect(()=>{
+		setValid(isDataFilled(contest,startDate,endDate,setDataChanged))
+	},[dataChanged,startDate,endDate])
 
 	return (
 		<button
@@ -17,10 +22,10 @@ export function AddProjectButton({
 				? requestProjectCreation
 				: () => alert("Please connect to your account first.")}
 			className={[
-				isDataFilled(contest)
+				valid
 					? buttonStyle
 					: "",
-					isDataFilled(contest)
+					valid
 					? "add-button"
 					: "add-button-off",
 			].join(" ")}>
@@ -39,8 +44,23 @@ function isLoggedIn(username){
 	}
 }
 
-function isDataFilled(contest){
-	return true
+function isDataFilled(contest,startDate,endDate,setDataChanged){
+	//TODO CHECK IF IMAGE IS VALID
+	//TODO CHECK IF REPOSITORIES ARE FILLED
+	//TOOD CHECK IF DATE IS VALID
+	var fields = ["name","description","logourl","credits","funding"];
+	var filled = true;
+	for(var i = 0; i<fields.length; i++){
+		if(contest[fields[i]] === undefined || contest[fields[i]] === "" || contest[fields[i]] === 0){
+			filled = false
+			console.log(contest[fields[i]])
+		}
+	}
+	if(startDate === undefined || endDate === undefined){
+		filled = false
+	}
+	setDataChanged(false)
+	return filled
 }
 
 async function addProject(contest, username,startDate,endDate) {

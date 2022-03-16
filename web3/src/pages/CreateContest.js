@@ -8,24 +8,18 @@ import { AddProjectButton } from "../components/ProjectForm/AddProjectButton";
 function CreateProject(props) {
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
-
-
+	const [dataChanged,setDataChanged] = useState(false);
 	const [contest, setContest] = useState({});
 	const [repositories, setRepositories] = useState([]);
 	const repositoryName = useRef();
 	const repositoryDescription = useRef();
-	const [appData, setAppData] = useState({
-		name: "Application Name",
-		symbol: "ABC",
-		logo: "",
-		contract: "0x0000000000000000000000000000000000000000",
-	});
 	const [status, setStatus] = useState("");
 	const [username, setUsername] = useState("");
 
 	const handleOnChangeContestData = (e, functionValue, setFunction, prop) => {
 		var currentValues = functionValue;
 		currentValues[prop] = e.target.value;
+		setDataChanged(true)
 		setFunction(currentValues);
 	};
 
@@ -106,6 +100,8 @@ function CreateProject(props) {
 						startDate={startDate}
 						endDate={endDate}
 						buttonStyle={props.classes.button}
+						dataChanged={dataChanged}
+						setDataChanged={setDataChanged}
 					/>
 				</div>
 			</div>

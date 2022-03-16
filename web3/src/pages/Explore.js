@@ -47,7 +47,7 @@ function Title() {
 function Description() {
 	return (
 		<p className="description">
-			Search for a project you want to support, voting and sharing your ideas.
+			Search for a contest you want to join, voting and sharing your ideas.
 		</p>
 	);
 }
