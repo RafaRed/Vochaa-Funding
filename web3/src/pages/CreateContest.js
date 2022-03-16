@@ -21,7 +21,7 @@ function CreateProject(props) {
 		contract: "0x0000000000000000000000000000000000000000",
 	});
 	const [status, setStatus] = useState("");
-	const [wallet, setWallet] = useState();
+	const [username, setUsername] = useState("");
 
 	const handleOnChangeContestData = (e, functionValue, setFunction, prop) => {
 		var currentValues = functionValue;
@@ -31,7 +31,7 @@ function CreateProject(props) {
 
 	return (
 		<>
-			<Navbar menu="explore" setWallet={setWallet} />
+			<Navbar menu="explore" setUsername={setUsername} username={username}/>
 			<div className="project">
 				<div className="wrapper">
 					<div className="header">
@@ -101,11 +101,11 @@ function CreateProject(props) {
 						setEndDate={setEndDate}></BlockDate>
 
 					<AddProjectButton
-						wallet={wallet}
-						appData={appData}
-						status={status}
-						appContract={appData.contract}
-						buttonStyle={props.classes.buttonStyle}
+						username={username}
+						contest={contest}
+						startDate={startDate}
+						endDate={endDate}
+						buttonStyle={props.classes.button}
 					/>
 				</div>
 			</div>

@@ -5,12 +5,11 @@ import {auth,provider} from '../model/firebaseConnect'
 
 
 function ConnectGitHub(props) {
-    const [username,setUsername] = useState("")
     onAuthStateChanged(auth,(currentUser) =>{
-        RecoverUsername(currentUser,setUsername)
+        RecoverUsername(currentUser,props.setUsername)
     })
     
-    return username !== "" ? UserButton(username,props.classes.clickable) : LoginButton(setUsername,props.classes.clickable)
+    return props.username !== "" ? UserButton(props.username,props.classes.clickable) : LoginButton(props.setUsername,props.classes.clickable)
 	
 }
 

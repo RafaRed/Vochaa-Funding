@@ -5,7 +5,7 @@ import injectSheet from "react-jss";
 
 import { SearchBar } from "../components/Explore/SearchBar";
 import { CreateBoard } from "../components/Explore/CreateBoard";
-import { AddProject } from "../components/Explore/AddProject";
+import { AddContest } from "../components/Explore/AddProject";
 import { GetProjects } from "../components/Explore/GetProjects";
 
 
@@ -25,7 +25,7 @@ function Explore(props) {
 						<Title></Title>
 						<Description></Description>
 						<SearchBar setSearch={setSearch}></SearchBar>
-						<AddProject links={props.classes.links}></AddProject>
+						<AddContest links={props.classes.links}></AddContest>
 					</div>
 					<div className="board">
 						<CreateBoard
@@ -41,7 +41,7 @@ function Explore(props) {
 }
 
 function Title() {
-	return <h1 className="title">Projects</h1>;
+	return <h1 className="title">Contests</h1>;
 }
 
 function Description() {

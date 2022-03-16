@@ -1,47 +1,63 @@
 import React from "react";
 import { getDatabase, ref, set, onValue } from "firebase/database";
+import moment from "moment";
 
 export function AddProjectButton({
-	wallet, appData, status, appContract, buttonStyle,
+	username, contest, buttonStyle,startDate,endDate
 }) {
 
 	const requestProjectCreation = () => {
-		if (appData.contract !== 0x0000000000000000000000000000000000000000 &&
-			status === "Done") {
-			addProject(appData, wallet);
-		} else {
-			alert("cannot add this contest.");
-		}
+		addProject(contest, username,startDate,endDate);
 	};
 
 	return (
 		<button
 			type="button"
-			onClick={wallet == undefined
-				? () => alert("Please connect to your wallet first.")
-				: requestProjectCreation}
+			onClick={isLoggedIn
+				? requestProjectCreation
+				: () => alert("Please connect to your account first.")}
 			className={[
-				appContract === "0x0000000000000000000000000000000000000000"
-					? ""
-					: buttonStyle,
-				appContract === "0x0000000000000000000000000000000000000000"
-					? "add-button-off"
-					: "add-button",
+				isDataFilled(contest)
+					? buttonStyle
+					: "",
+					isDataFilled(contest)
+					? "add-button"
+					: "add-button-off",
 			].join(" ")}>
 			ADD THIS CONTEST
 		</button>
 	);
 }
 
-async function addProject(appData, wallet) {
-	const db = getDatabase();
-	await set(ref(db, "projects/" + appData.contract), {
-		name: appData.name,
-		logo: appData.logo,
-		symbol: appData.symbol,
-		address: appData.contract,
-		sender: wallet,
-	});
+function isLoggedIn(username){
+	//TODO Validade Login
+	if(username === ""){
+		return false
+	}
+	else{
+		return true
+	}
+}
 
-	window.location.href = "/contest" + "/" + appData.contract;
+function isDataFilled(contest){
+	return true
+}
+
+async function addProject(contest, username,startDate,endDate) {
+	//TODO Verifiy if user is whitelisted
+	//TODO Change to server-side
+	const db = getDatabase();
+	await set(ref(db, "contest/" + contest.name), {
+		name: contest.name,
+		description: contest.description,
+		logourl: contest.logourl,
+		credits: contest.credits,
+		funding: contest.funding,
+		startDate: startDate.unix(),
+		endDate: endDate.unix(),
+		timestamp: moment().unix(),
+		sender: username,
+	});
+	//TODO Change to ID
+	window.location.href = "/contest" + "/" + contest.name;
 }
