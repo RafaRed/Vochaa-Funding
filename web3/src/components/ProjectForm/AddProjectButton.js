@@ -8,7 +8,13 @@ export function AddProjectButton({
 	const [valid,setValid] = useState(false)
 
 	const requestProjectCreation = () => {
-		addProject(contest, username,startDate,endDate);
+		if(valid){
+			addProject(contest, username,startDate,endDate);
+		}
+		else{
+			alert("Please fill all the fields.")
+		}
+		
 	};
 
 	useEffect(()=>{
@@ -18,7 +24,7 @@ export function AddProjectButton({
 	return (
 		<button
 			type="button"
-			onClick={isLoggedIn
+			onClick={isLoggedIn(username)
 				? requestProjectCreation
 				: () => alert("Please connect to your account first.")}
 			className={[
@@ -35,8 +41,7 @@ export function AddProjectButton({
 }
 
 function isLoggedIn(username){
-	//TODO Validade Login
-	if(username === ""){
+	if(username === "" || username === undefined){
 		return false
 	}
 	else{
