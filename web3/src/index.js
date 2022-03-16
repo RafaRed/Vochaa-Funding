@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-
+import firebase from "./model/firebaseConnect";
 import App from "./pages/App";
 import Explore from "./pages/Explore";
 import Contest from "./pages/Contest";
@@ -10,6 +10,9 @@ import Proposal from "./pages/Proposal";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { Web3ReactProvider } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers";
+
+
+
 
 
 function getLibrary(provider) {

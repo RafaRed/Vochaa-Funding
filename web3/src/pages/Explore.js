@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../css/Explore.css";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
-import firebase from "../model/firebaseConnect";
+
 import { SearchBar } from "../components/Explore/SearchBar";
 import { CreateBoard } from "../components/Explore/CreateBoard";
 import { AddProject } from "../components/Explore/AddProject";

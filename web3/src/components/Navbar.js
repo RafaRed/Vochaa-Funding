@@ -1,7 +1,7 @@
 import React from 'react';
 import './Navbar.css'
 import injectSheet from 'react-jss';
-import ConnectMetamask from "./ConnectMetamask"
+import ConnectGitHub from "./ConnectGitHub"
 
 const styles ={
   clickable:{
@@ -22,7 +22,7 @@ function Navbar(props) {
   <a className={props.menu === "about" ? "active" : ""} href="https://github.com/RafaRed/Vochaa">ABOUT</a>
   </div>
  
-  <ConnectMetamask setWallet={props.setWallet}/>
+  <ConnectGitHub/>
 </div>;
 }
 
