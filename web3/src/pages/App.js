@@ -29,7 +29,7 @@ function App() {
 					<Card
 						img="images/avatar2.png"
 						name="Explore Contests"
-						desc="Discover the contests and help by voting."
+						desc="Discover the contests, join and help voting."
 						button="EXPLORE"
 						link="/explore"
 					/>
@@ -50,9 +50,9 @@ function Title() {
 function ProjectDescription() {
 	return (
 		<p className="description">
-			Be part of the community by adding new projects, suggesting new proposals
-			<br></br> and voting for your favorite blockchain proposals using quadratic
-			voting systems.
+			Be part of the community by adding new contests, joining contests
+			<br></br> and voting for your favorite proposals using quadratic
+			voting.
 		</p>
 	);
 }

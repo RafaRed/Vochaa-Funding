@@ -143,6 +143,7 @@
   color: #fff;
   font-size: 24px;
   font-weight: 700;
+  box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
 }
 .project .add-button-off {
   margin-top: 50px;
@@ -154,6 +155,7 @@
   color: #fff;
   font-size: 24px;
   font-weight: 700;
+  box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
 }
 .project .chips {
   display: flex;
@@ -236,6 +238,7 @@
   color: #fff;
   font-size: 16px;
   font-weight: 700;
+  box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
 }
 
 .project .input-day{

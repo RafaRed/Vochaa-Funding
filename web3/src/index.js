@@ -10,6 +10,7 @@ import Proposal from "./pages/Proposal";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { Web3ReactProvider } from "@web3-react/core"
 import { Web3Provider } from "@ethersproject/providers";
+import SetupContest from "./pages/SetupContest";
 
 
 
@@ -29,7 +30,7 @@ ReactDOM.render(
       <Route exact path="/" element={<App/>} />
       <Route exact path="/create-contest" element={<CreateContest/>} />
       <Route exact path="/explore" element={<Explore/>} />
-      <Route exact path="/contest/:contest" element={<Contest/>} />
+      <Route exact path="/contest/:contest" element={<SetupContest/>} />
       <Route exact path="/contest/:contest/create-proposal" element={<CreateProposal/>} />
       <Route exact path="/contest/:contest/:proposal" element={<Proposal/>} />
       </Routes>

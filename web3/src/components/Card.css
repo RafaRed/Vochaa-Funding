@@ -27,6 +27,7 @@ img
     color: #fff;
     font-size: 24px;
     font-weight: 700;
+    box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
     
 }
 .card .info{
