@@ -13,12 +13,13 @@ import { GetProjects } from "../components/Explore/GetProjects";
 function Explore(props) {
 	const [projects, setProjects] = useState();
 	const [search, setSearch] = useState();
+	const [username, setUsername] = useState("");
 
 	GetProjects(setProjects);
 
 	return (
 		<>
-			<Navbar menu="explore" />
+			<Navbar menu="explore" username={username} setUsername={setUsername}/>
 			<div className="explore">
 				<div className="wrapper">
 					<div className="header">

@@ -1,11 +1,13 @@
 import "../css/App.css";
 import Navbar from "../components/Navbar";
 import Card from "../components/Card";
+import {useState} from "react"
 
 function App() {
+	const [username, setUsername] = useState("");
 	return (
 		<div className="App">
-			<Navbar menu="home" />
+			<Navbar menu="home" username={username} setUsername={setUsername}/>
 			<div className="header">
 				<div className="horizontalBar"></div>
 				<div>

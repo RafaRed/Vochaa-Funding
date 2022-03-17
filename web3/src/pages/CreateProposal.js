@@ -22,10 +22,10 @@ function CreateProposal(props) {
 	const [option, setOption] = useState("");
 	const [options, setOptions] = useState([]);
 	const [wallet, setWallet] = useState();
-
+	const [username, setUsername] = useState("");
 	return (
 		<>
-			<Navbar menu="explore" setWallet={setWallet} />
+			<Navbar menu="explore" username={username} setUsername={setUsername}/>
 			<div className="create-proposal">
 				<div className="wrapper">
 					<div className="header">

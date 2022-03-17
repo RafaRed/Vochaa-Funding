@@ -21,7 +21,7 @@ function Proposal(props) {
 		credits: "0",
 	});
 	const [wallet, setWallet] = useState();
-
+	const [username, setUsername] = useState("");
 	const params = useParams();
 
 	LoadVotes(
@@ -40,7 +40,7 @@ function Proposal(props) {
 
 	return (
 		<div>
-			<Navbar menu="explore" setWallet={setWallet} />
+			<Navbar menu="explore" username={username} setUsername={setUsername} />
 			<div className="proposal">
 				<div className="wrapper">
 					<div className="header">

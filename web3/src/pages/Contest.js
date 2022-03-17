@@ -12,12 +12,12 @@ function Project(props) {
 	const [project, setProject] = useState({ name: "", symbol: "", address: "" });
 	const [proposals, setProposals] = useState({});
 	const params = useParams();
-
+	const [username, setUsername] = useState("");
 	GetProject(params, setProject, setProposals);
 
 	return (
 		<>
-			<Navbar menu="explore" />
+			<Navbar menu="explore" username={username} setUsername={setUsername}/>
 			<div className="proj">
 				<div className="wrapper">
 					<div className="centred-block">
