@@ -1,0 +1,66 @@
+.repositories {
+	display: flex;
+	justify-content: center;
+}
+
+.repositories .title {
+	margin-top: 60px;
+	color: #ffffff;
+	font-size: 3.5rem;
+	font-weight: 700;
+	margin-bottom: 20px;
+}
+
+.repositories .description {
+	font-size: 18px;
+	text-align: center;
+	width: 48%;
+}
+.repositories .wrapper {
+	width: 70%;
+}
+
+.repositories .header {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.repositories .search-bar {
+	width: 70%;
+	max-width: 500px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+	background-color: #ececec;
+	border: none;
+	border-radius: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+	display: flex;
+
+	align-items: center;
+}
+
+.repositories .block-input {
+	width: 100%;
+	background-color: #ececec;
+	height: 30px;
+	border: none;
+	outline: none;
+	margin-right: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.repositories .repo-task{
+    display: flex;
+    align-items: center;
+    height: 30px;
+    background-color: #ececec;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+
+}

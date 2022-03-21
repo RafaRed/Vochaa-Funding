@@ -106,8 +106,17 @@
   margin-bottom: 10px;
 }
 
-.setup-contest .pr{
+.setup-contest .pr-line{
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: top;
   margin-bottom: 10px;
+
+}
+.setup-contest .pr{
+  width: 100%;
+
 }
 
 .setup-contest .pr-header{
@@ -117,6 +126,7 @@
   padding: 10px;
   gap:10px;
   cursor: pointer;
+  white-space: nowrap;
   
 }
 
@@ -142,4 +152,10 @@
   border-radius: 10px;
   margin-bottom: 5px;
   padding: 10px;
+}
+
+.setup-contest .pr-checkbox{
+  min-height: 15px;
+  margin-top: 15px;
+  min-width: 15px;
 }

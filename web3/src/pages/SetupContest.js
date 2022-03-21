@@ -3,7 +3,7 @@ import Navbar from "../components/Navbar";
 import "../css/SetupContest.css";
 import injectSheet from "react-jss";
 import Papa from "papaparse";
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from "react-markdown";
 
 function SetupContest() {
 	const [username, setUsername] = useState("");
@@ -95,42 +95,54 @@ function PullRequests(array) {
 	console.log(array);
 	if (array !== undefined && array.array != undefined) {
 		for (var i = 0; i < array.array.length; i++) {
-			pulls.push(<PullRequestLayout key={i} array={array.array} i={i}></PullRequestLayout>);
+			pulls.push(
+				<PullRequestLayout key={i} array={array.array} i={i}></PullRequestLayout>
+			);
 		}
 	}
 	console.log(pulls);
 	return pulls;
 }
 
-function PullRequestLayout({array,i}) {
-	
-	return(<div className="pr">
-		<div className="pr-checkbox"></div>
-		<div className="pr-header" onClick={()=>toggleClass(i)}>
-			<p className="pr-id">#{array[i]["#"]}</p>
-			<p className="pr-title">{array[i].Title}</p>
-			<p className="pr-author"> - {array[i].User}</p>
+function PullRequestLayout({ array, i }) {
+	return (
+		<div className="pr-line">
+			<input className="pr-checkbox" type="checkbox" id="pull" name="checkbox-pull"></input>
+			<div className="pr">
+				<div className="pr-header" onClick={() => toggleClass(i)}>
+					<p className="pr-id">#{array[i]["#"]}</p>
+					<p className="pr-title">{array[i].Title}</p>
+					<p className="pr-author"> - {array[i].User}</p>
+				</div>
+				<div id={"id-" + i} className={["pr-content", "hidden"].join(" ")}>
+					<p className="pr-body">
+						<ReactMarkdown>{array[i].Body}</ReactMarkdown>
+					</p>
+					<a className="pr-url" href={array[i].URL}>
+						{array[i].URL}
+					</a>
+					<p className="pr-repository">
+						<b>Repo: </b>
+						{array[i].Repository}
+					</p>
+					<p className="pr-created">
+						<b>Openned at: </b>
+						{array[i].Created}
+					</p>
+				</div>
+			</div>
 		</div>
-		<div id={"id-"+i} className={["pr-content","hidden"].join(' ')}>
-			<p className="pr-body"><ReactMarkdown>{array[i].Body}</ReactMarkdown></p>
-			<a className="pr-url" href={array[i].URL}>{array[i].URL}</a>
-			<p className="pr-repository">
-				<b>Repo: </b>
-				{array[i].Repository}
-			</p>
-			<p className="pr-created">
-				<b>Openned at: </b>
-				{array[i].Created}
-			</p>
-		</div>
-	</div>)
+	);
 }
 
 function toggleClass(i) {
-    const oldClassName = document.getElementById('id-'+i).className;
-    const newClassName = oldClassName === 'pr-content hidden' ? 'pr-content visible' : 'pr-content hidden'
-    document.getElementById('id-'+i).className = newClassName
-  }
+	const oldClassName = document.getElementById("id-" + i).className;
+	const newClassName =
+		oldClassName === "pr-content hidden"
+			? "pr-content visible"
+			: "pr-content hidden";
+	document.getElementById("id-" + i).className = newClassName;
+}
 
 function showContent() {}
 

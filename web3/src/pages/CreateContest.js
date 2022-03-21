@@ -13,6 +13,7 @@ function CreateProject(props) {
 	const [repositories, setRepositories] = useState([]);
 	const repositoryName = useRef();
 	const repositoryDescription = useRef();
+	const repositoryURL = useRef();
 	const [status, setStatus] = useState("");
 	const [username, setUsername] = useState("");
 
@@ -72,6 +73,9 @@ function CreateProject(props) {
 						handleOnChangeRepositoryName={(e) =>
 							handleOnChangeContestData(e, contest, setContest, "repositoryName")
 						}
+						handleOnChangeRepositoryURL={(e) =>
+							handleOnChangeContestData(e, contest, setContest, "repositoryURL")
+						}
 						contest={contest}
 						setContest={setContest}
 						handleOnChangeRepositoryDescription={(e) =>
@@ -83,6 +87,7 @@ function CreateProject(props) {
 							)
 						}
 						repositoryDescription={repositoryDescription}
+						repositoryURL={repositoryURL}
 						repositories={repositories}
 						setRepositories={setRepositories}></BlockAddRepositories>
 
@@ -213,6 +218,13 @@ function BlockAddRepositories(props) {
 				onChange={props.handleOnChangeRepositoryDescription}
 				className={["block-input", props.buttonStyle].join(" ")}
 			/>
+			<p>Repository Url</p>
+			<input
+				type="text"
+				ref={props.repositoryURL}
+				onChange={props.handleOnChangeRepositoryURL}
+				className={["block-input", props.buttonStyle].join(" ")}
+			/>
 			<button onClick={() => addRepository(props)} className="add-button-mini">
 				Add Repository
 			</button>
@@ -224,14 +236,17 @@ function addRepository(props) {
 	if (
 		props.repositoryName.current.value != "" &&
 		props.repositoryDescription.current.value != ""
+		&& props.repositoryURL.current.value != ""
 	) {
 		var data = {
 			name: props.repositoryName.current.value,
 			description: props.repositoryDescription.current.value,
+			url: props.repositoryURL.current.value,
 		};
 		props.setRepositories([...props.repositories, data]);
 		props.repositoryName.current.value = "";
 		props.repositoryDescription.current.value = "";
+		props.repositoryURL.current.value = "";
 	}
 }
 
@@ -247,6 +262,7 @@ function FetchRepositories(props) {
 				repositoryItem(
 					props.repositories[i].name,
 					props.repositories[i].description,
+					props.repositories[i].url,
 					i,
 					props.repositories,
 					props.setRepositories
@@ -257,11 +273,12 @@ function FetchRepositories(props) {
 	
 }
 
-function repositoryItem(name, description, id, repositories, setRepositories) {
+function repositoryItem(name, description, url, id, repositories, setRepositories) {
 	return (
 		<div key={id}>
 			<h2 className="block-title">{name}</h2>
 			<p className="block-description">{description}</p>
+			<p className="block-description">{url}</p>
 			<button
 				onClick={() => removeRepositoryItem(id, repositories, setRepositories)}>
 				remove
