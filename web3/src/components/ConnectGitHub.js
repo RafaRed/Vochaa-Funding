@@ -1,82 +1,97 @@
 import injectSheet from "react-jss";
-import {useState} from 'react';
-import { GithubAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
-import {auth,provider} from '../model/firebaseConnect'
+import { useState } from "react";
+import {
+	GithubAuthProvider,
+	signInWithPopup,
+	onAuthStateChanged,
+	signOut,
+} from "firebase/auth";
+import { auth, provider } from "../model/firebaseConnect";
+import { getAuth, getUsername } from "../model/Calls/Auth";
+import { connect } from "react-redux";
 
-import {getAuth,getUsername} from '../model/Calls/Auth'
+import store from '../store';
+import {saveState, loadState} from '../store/localstorage';
 
+
+function SaveUsername(){
+    store.subscribe(()=>{
+        saveState({
+            username: store.getState().username
+        })
+    })
+}
 
 function ConnectGitHub(props) {
-    onAuthStateChanged(auth,(currentUser) =>{
-        RecoverUsername(currentUser,props.setUsername)
-        getAuth().then(data => console.log(data))
-    })
     
-    return props.username !== "" ? UserButton(props.username,props.classes.clickable) : LoginButton(props.setUsername,props.classes.clickable)
-	
+	onAuthStateChanged(auth, (currentUser) => {
+		RecoverUsername(currentUser, props.setUser,props.user);
+		//getAuth().then(data => console.log(data))
+	});
+	return props.user !== ""
+		? UserButton(props.user, props.classes.clickable, props.setUser)
+		: LoginButton(props.setUser, props.classes.clickable);
 }
 
-
-async function RecoverUsername(currentUser,setUsername){
-
+async function RecoverUsername(currentUser, setUsername, user) {
     
-    if(currentUser != null){
-       var username = await getUsername()
-        setUsername(username)
-    }
-    else{
-        setUsername("")
-    }
-    
+        if (currentUser != null) {
+            if(user === ""){
+                var username = await getUsername();
+                setUsername(username);
+                SaveUsername()
+                
+            }
+            else{
+                //console.log("load from cache")
+                setUsername(user)
+            }
+            
+        } else {
+            setUsername("");
+            SaveUsername()
+            
+        }
+        
 }
 
-async function signout(){
-    await signOut(auth);
+async function signout(setUser) {
+	await signOut(auth);
+
 }
 
-function LoginButton(setUsername,buttonStyle){
-    return (
+function LoginButton(setUsername, buttonStyle) {
+	return (
 		<button
-			onClick={()=>login(setUsername)}
+			onClick={() => login(setUsername)}
 			className={["metamask", buttonStyle].join(" ")}>
 			Connect GitHub
-		</button>)
-        ;
+		</button>
+	);
 }
 
-function UserButton(username,buttonStyle){
-    return (
+function UserButton(username, buttonStyle, setUser) {
+	return (
 		<button
-            onClick={signout}
+			onClick={() => signout(setUser)}
 			className={["metamask", buttonStyle].join(" ")}>
 			{username}
-		</button>)
-        ;
+		</button>
+	);
 }
 
-
-
 function login(setUsername) {
-    signInWithPopup(auth, provider)
-    .then((result) => {
-        // This gives you a GitHub Access Token. You can use it to access the GitHub API.
-        const credential = GithubAuthProvider.credentialFromResult(result);
-        //const token = credential.accessToken;
-
-        // The signed-in user info.
-        //const user = result.user;
-        //setUsername(user.reloadUserInfo.screenName)
-        // ...
-    }).catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.email;
-        // The AuthCredential type that was used.
-        const credential = GithubAuthProvider.credentialFromError(error);
-        // ...
-    });
+	signInWithPopup(auth, provider)
+		.then((result) => {
+			const credential = GithubAuthProvider.credentialFromResult(result);
+		})
+		.catch((error) => {
+			const errorCode = error.code;
+			const errorMessage = error.message;
+			const email = error.email;
+			const credential = GithubAuthProvider.credentialFromError(error);
+			// ...
+		});
 }
 
 const styles = {
@@ -91,4 +106,14 @@ const styles = {
 	},
 };
 
-export default injectSheet(styles)(ConnectGitHub);
+const mapStateToProps = (state) => ({
+	user: state.username,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+	setUser: (username) => dispatch({ type: "SET", payload: { username } }),
+});
+
+export default injectSheet(styles)(
+	connect(mapStateToProps, mapDispatchToProps)(ConnectGitHub)
+);

@@ -28,7 +28,6 @@ function getGithubUid(idToken) {
 }
 
 function fetchGithub(uid) {
-    console.log("start")
 	return new Promise((resolve, reject) => {
         
         key = "user_"+uid
