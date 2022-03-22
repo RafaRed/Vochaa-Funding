@@ -128,3 +128,20 @@
     font-weight: 700;
     box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
   }
+
+  .task .contest-name{
+      margin-bottom: -15px;
+  }
+
+  .task .contest-pool-value{
+      margin-top: -20px;
+      color: #22D1B2;
+  }
+
+  
+
+  .task .view-button-wrapper{
+      text-align: center;
+      line-height: 40px;
+      text-decoration: none;
+  }

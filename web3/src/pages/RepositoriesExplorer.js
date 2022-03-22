@@ -43,7 +43,7 @@ function LoadTasks({params}) {
 }
 
 function Task(params) {
-	return (<a href={"/contest/"+params.contest+"/taskid"}><div className="repo-task">Task Name</div></a>);
+	return (<a className="contest-button" href={"/contest/"+params.contest+"/taskid"}><div className="repo-task">Task Name</div></a>);
 }
 
 const styles = {

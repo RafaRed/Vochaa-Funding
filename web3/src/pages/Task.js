@@ -41,7 +41,9 @@ function Task() {
 							<div className="contest-logo">
 								<img src=""></img>
 							</div>
-							<h2>Contest Name</h2>
+							<h2 className="contest-name">Contest Name</h2>
+                            <p className="contest-pool">Funding Pool</p>
+                            <h2 className="contest-pool-value">$80.000</h2>
 						</div>
 					</div>
 					<div className="search-bar">
@@ -49,7 +51,7 @@ function Task() {
 						<img src="/images/search.png" />
 					</div>
 					<div className="board">
-						<FetchPullRequests></FetchPullRequests>
+						<FetchPullRequests params={params}></FetchPullRequests>
 					</div>
 				</div>
 			</div>
@@ -57,11 +59,11 @@ function Task() {
 	);
 }
 
-function FetchPullRequests() {
-	return [PullRequest(), PullRequest(), PullRequest()];
+function FetchPullRequests({params}) {
+	return [PullRequest(params), PullRequest(params), PullRequest(params)];
 }
 
-function PullRequest() {
+function PullRequest(params) {
 	return (
 		<div className="pr">
 			<p className="pr-id">#1</p>
@@ -83,7 +85,10 @@ function PullRequest() {
 			<p>50</p>
 			<p>Value Match</p>
 			<p>$600 0.05%</p>
-            <button className="view-button">View More</button>
+            <a className="view-button-wrapper" href={"/contest/"+params.contest+"/taskid/"+"proposalid"}>
+                <p className="view-button">View More</p>
+            </a>
+            
 		</div>
 	);
 }

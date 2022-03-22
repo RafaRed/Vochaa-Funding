@@ -10,7 +10,7 @@ import { VoteStatusBar } from "../components/Proposals/VoteStatusBar";
 import { LoadVotes } from "../components/Proposals/LoadVotes";
 
 function Proposal(props) {
-	const [project, setProject] = useState({ name: "", symbol: "", address: "" });
+	const [project, setProject] = useState({ name: "#1 - Pull Request Title", symbol: "", address: "" });
 	const [credits, setCredits] = useState(0);
 	const [currentCredits, setCurrentCredits] = useState(0);
 	const [vote, setVote] = useState([]);
@@ -20,11 +20,10 @@ function Proposal(props) {
 		description: "",
 		credits: "0",
 	});
-	const [wallet, setWallet] = useState();
 	const [username, setUsername] = useState("");
 	const params = useParams();
 
-	LoadVotes(
+	/*LoadVotes(
 		params,
 		setProject,
 		setProposal,
@@ -34,7 +33,7 @@ function Proposal(props) {
 		proposal,
 		vote,
 		setVote
-	);
+	);*/
 	var now = moment().unix();
 	var status = getStatus(now, proposal);
 
@@ -84,7 +83,7 @@ function Proposal(props) {
 							currentCredits={currentCredits}
 							vote={vote}
 							proposal={proposal}
-							wallet={wallet}
+							username={username}
 							params={params}
 							status={status}></ConfirmVoteButton>
 					</div>

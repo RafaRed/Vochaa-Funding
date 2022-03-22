@@ -2,6 +2,7 @@
   "name": "web3",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "dependencies": {
     "@ethersproject/providers": "^5.5.3",
     "@testing-library/jest-dom": "^5.16.1",

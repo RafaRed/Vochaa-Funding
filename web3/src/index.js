@@ -36,7 +36,7 @@ ReactDOM.render(
       <Route exact path="/contest/:contest/tasks" element={<RepositoriesExplorer/>} />
       <Route exact path="/contest/:contest/:task" element={<Task/>} />
       <Route exact path="/contest/:contest/create-proposal" element={<CreateProposal/>} />
-      <Route exact path="/contest/:contest/:proposal" element={<Proposal/>} />
+      <Route exact path="/contest/:contest/:task/:proposal" element={<Proposal/>} />
       </Routes>
     </Router>
     </Web3ReactProvider>,

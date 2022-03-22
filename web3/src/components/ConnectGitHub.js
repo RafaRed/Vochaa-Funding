@@ -3,10 +3,13 @@ import {useState} from 'react';
 import { GithubAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
 import {auth,provider} from '../model/firebaseConnect'
 
+import {getAuth,getUsername} from '../model/Calls/Auth'
+
 
 function ConnectGitHub(props) {
     onAuthStateChanged(auth,(currentUser) =>{
         RecoverUsername(currentUser,props.setUsername)
+        getAuth().then(data => console.log(data))
     })
     
     return props.username !== "" ? UserButton(props.username,props.classes.clickable) : LoginButton(props.setUsername,props.classes.clickable)
@@ -18,10 +21,8 @@ async function RecoverUsername(currentUser,setUsername){
 
     
     if(currentUser != null){
-        var uid = currentUser.providerData[0].uid;
-        await fetch('https://api.github.com/user/'+uid)
-        .then(response => response.json())
-        .then(data => setUsername(data.login));
+       var username = await getUsername()
+        setUsername(username)
     }
     else{
         setUsername("")
