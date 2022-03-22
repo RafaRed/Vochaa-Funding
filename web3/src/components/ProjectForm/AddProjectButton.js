@@ -1,15 +1,16 @@
 import React, {useState,useEffect} from "react";
 import { getDatabase, ref, set, onValue } from "firebase/database";
-import moment from "moment";
+import { createContest } from "../../model/Calls/Database";
+
 
 export function AddProjectButton({
-	username, contest, buttonStyle,startDate,endDate,dataChanged,setDataChanged
+	username, contest, buttonStyle,startDate,endDate,repositories,dataChanged,setDataChanged
 }) {
 	const [valid,setValid] = useState(false)
 
 	const requestProjectCreation = () => {
 		if(valid){
-			addProject(contest, username,startDate,endDate);
+			addProject(contest, repositories, startDate,endDate);
 		}
 		else{
 			alert("Please fill all the fields.")
@@ -68,10 +69,12 @@ function isDataFilled(contest,startDate,endDate,setDataChanged){
 	return filled
 }
 
-async function addProject(contest, username,startDate,endDate) {
+async function addProject(contest,repositories,startDate,endDate) {
 	//TODO Verifiy if user is whitelisted
 	//TODO Change to server-side
-	const db = getDatabase();
+	createContest(contest,startDate,endDate,repositories)
+	//.then((data)=> window.location.href = "/explore")
+	/*const db = getDatabase();
 	await set(ref(db, "contest/" + contest.name), {
 		name: contest.name,
 		description: contest.description,
@@ -82,7 +85,7 @@ async function addProject(contest, username,startDate,endDate) {
 		endDate: endDate.unix(),
 		timestamp: moment().unix(),
 		sender: username,
-	});
+	});*/
 	//TODO Change to ID
-	window.location.href = "/contest" + "/" + contest.name;
+	
 }

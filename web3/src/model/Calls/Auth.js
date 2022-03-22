@@ -15,7 +15,7 @@ function requestAuth(idToken){
 
 }
 
-function getIdToken(){
+export function getIdToken(){
     return new Promise((resolve,reject) => {
         auth.currentUser.getIdToken()
         .then((idToken) => resolve(idToken))

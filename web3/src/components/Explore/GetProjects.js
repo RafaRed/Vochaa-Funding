@@ -9,7 +9,8 @@ export function GetProjects(setProjects) {
 			const data = snapshot.val();
 			const projectList = {};
 			for (let project in data) {
-				projectList[data[project]["address"]] = data[project];
+
+				projectList[project] = data[project];
 			}
 			setProjects(projectList);
 		});

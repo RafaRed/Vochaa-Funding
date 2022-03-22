@@ -51,6 +51,7 @@ function CreateProject(props) {
 
 					<BlockLogo
 						buttonStyle={props.classes.buttonStyle}
+						logourl={contest.logourl}
 						handleOnChangeContestData={(e) =>
 							handleOnChangeContestData(e, contest, setContest, "logourl")
 						}></BlockLogo>
@@ -104,6 +105,7 @@ function CreateProject(props) {
 						contest={contest}
 						startDate={startDate}
 						endDate={endDate}
+						repositories={repositories}
 						buttonStyle={props.classes.button}
 						dataChanged={dataChanged}
 						setDataChanged={setDataChanged}
@@ -153,7 +155,9 @@ function BlockDescription(props) {
 function BlockLogo(props) {
 	return (
 		<div className="block-image">
-			<div className="lazy-image"></div>
+			<div >
+				<img className="lazy-image" src={props.logourl}></img>
+			</div>
 			<div className="content">
 				<h2 className="block-image-title">Contest Logo</h2>
 				<p className="block-image-description">Add the contest logo url</p>

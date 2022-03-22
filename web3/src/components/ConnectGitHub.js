@@ -25,9 +25,10 @@ function SaveUsername(){
 function ConnectGitHub(props) {
     
 	onAuthStateChanged(auth, (currentUser) => {
-		RecoverUsername(currentUser, props.setUser,props.user);
+		RecoverUsername(currentUser, props.setUser, props.user);
 		//getAuth().then(data => console.log(data))
 	});
+	props.setUsername(props.user)
 	return props.user !== ""
 		? UserButton(props.user, props.classes.clickable, props.setUser)
 		: LoginButton(props.setUser, props.classes.clickable);
