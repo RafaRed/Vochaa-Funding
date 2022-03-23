@@ -3,7 +3,7 @@ import {loadState} from '../store/localstorage';
 
 function hasSameKeys(mainCollection,newCollection){
     for(var key in mainCollection) {
-        if(newCollection !== undefined && !(key in newCollection))
+        if(newCollection === undefined || !(key in newCollection))
         {
             return false;
         }
