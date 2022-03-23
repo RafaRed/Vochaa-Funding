@@ -117,6 +117,17 @@ function registerContest(data,username){
 
 }
 
+app.post("/gettasks", (req, res) => {
+  var contestid = req.body.contestid;
+  var ref = db.ref("/repository/"+contestid);
+  ref.once("value", function(snapshot) {
+    var data = snapshot.val();
+    console.log(data)
+    res.json(data)
+  });
+
+})
+
 
 
 

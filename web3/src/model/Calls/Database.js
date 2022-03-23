@@ -1,4 +1,4 @@
-import { server, createcontest_path } from "../repository";
+import { server, createcontest_path, gettasks_path } from "../repository";
 import moment from "moment";
 import { getIdToken } from "./Auth";
 
@@ -25,10 +25,23 @@ export async function createContest(contest,startDate,endDate,repositories){
         body: JSON.stringify(data)
     };
     return new Promise((resolve,reject)=>{
-        fetch(server+createcontest_path, requestOptions)
+        fetch(server+gettasks_path, requestOptions)
         .then(response => response.json())
         .then(data => resolve(data));
     })
 
 
+}
+
+export async function loadTasks(contestid){
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({"contestid":contestid})
+    };
+    return new Promise((resolve,reject)=>{
+        fetch(server+gettasks_path, requestOptions)
+        .then(response => response.json())
+        .then(data => resolve(data));
+    })
 }

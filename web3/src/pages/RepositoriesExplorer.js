@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
 import "../css/RepositoriesExplorer.css";
+import { loadTasks } from "../model/Calls/Database";
 
 function RepositoriesExplorer(props) {
 	const [username, setUsername] = useState("");
-    const params = useParams();
+	const params = useParams();
 	return (
 		<>
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
@@ -38,12 +39,28 @@ function RepositoriesExplorer(props) {
 	);
 }
 
-function LoadTasks({params}) {
-	return [Task(params), Task(params), Task(params), Task(params), Task(params)];
+function LoadTasks({ params }) {
+	const [taskList,setTaskList] = useState([]);
+	useEffect(()=>{
+		var newTaskList = []
+		loadTasks(params.contest).then((tasks) => {
+			for (const [key, value] of Object.entries(tasks)) {
+				newTaskList.push(Task(tasks[key],key));
+			}
+			setTaskList(newTaskList)
+		},[]);
+
+	})
+	
+	return taskList;
 }
 
-function Task(params) {
-	return (<a className="contest-button" href={"/contest/"+params.contest+"/taskid"}><div className="repo-task">Task Name</div></a>);
+function Task(task,key) {
+	return (
+		<a className="contest-button" key={key} href={"/contest/" + key + "/taskid" }>
+			<div className="repo-task">{task['name']}</div>
+		</a>
+	);
 }
 
 const styles = {

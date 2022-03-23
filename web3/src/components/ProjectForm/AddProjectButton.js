@@ -73,7 +73,7 @@ async function addProject(contest,repositories,startDate,endDate) {
 	//TODO Verifiy if user is whitelisted
 	//TODO Change to server-side
 	createContest(contest,startDate,endDate,repositories)
-	//.then((data)=> window.location.href = "/explore")
+	.then((data)=> window.location.href = "/explore")
 	/*const db = getDatabase();
 	await set(ref(db, "contest/" + contest.name), {
 		name: contest.name,
