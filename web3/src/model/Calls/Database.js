@@ -25,7 +25,7 @@ export async function createContest(contest,startDate,endDate,repositories){
         body: JSON.stringify(data)
     };
     return new Promise((resolve,reject)=>{
-        fetch(server+gettasks_path, requestOptions)
+        fetch(server+createcontest_path, requestOptions)
         .then(response => response.json())
         .then(data => resolve(data));
     })
@@ -48,7 +48,7 @@ export async function loadTasks(contestid){
 
 export async function updatePullRequests(contestid, data){
     var idToken = await getIdToken()
-    
+
     var newdata = {}
     newdata['idToken'] = idToken
     newdata['repositories'] = data
