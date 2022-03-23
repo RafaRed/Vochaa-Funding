@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
 import "../css/RepositoriesExplorer.css";
@@ -46,7 +46,7 @@ function LoadTasks({ params, taskList, setTaskList}) {
 			var newTaskList = []
 			loadTasks(params.contest).then((tasks) => {
 				for (const [key, value] of Object.entries(tasks)) {
-					newTaskList.push(Task(tasks[key],key));
+					newTaskList.push(Task(tasks[key],key,params.contest));
 				}
 				setTaskList(newTaskList)
 	
@@ -59,9 +59,9 @@ function LoadTasks({ params, taskList, setTaskList}) {
 	return taskList;
 }
 
-function Task(task,key) {
+function Task(task,key,contestid) {
 	return (
-		<a className="contest-button" key={key} href={"/contest/" + key + "/taskid" }>
+		<a className="contest-button" key={key} href={"/contest/" + contestid +"/"+ key }>
 			<div className="repo-task">{task['name']}</div>
 		</a>
 	);

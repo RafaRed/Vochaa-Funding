@@ -14,8 +14,8 @@ var admin = require("firebase-admin");
 var serviceAccount = require("./config.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://vochaafunding-default-rtdb.firebaseio.com"
+	credential: admin.credential.cert(serviceAccount),
+	databaseURL: "https://vochaafunding-default-rtdb.firebaseio.com",
 });
 
 //initializeApp();
@@ -124,7 +124,7 @@ app.post("/gettasks", (req, res) => {
 
 app.post("/updatepullrequests", (req, res) => {
 	var idToken = req.body.idToken;
-  // CHECK IF IS THE SAME USER OF THE CONTEST CREATOR.
+	// CHECK IF IS THE SAME USER OF THE CONTEST CREATOR.
 	getGithubData(idToken)
 		.then((data) => getUsername(data))
 		.then((username) => isWhitelisted(username))
@@ -139,31 +139,28 @@ app.post("/updatepullrequests", (req, res) => {
 		});
 });
 
-
-function updatePullRequests(data){
-
-  for(var i=0; i< data.length; i++){
-    var newData = {
-      pr:data[i].pr,
-      title: data[i].title,
-      user: data[i].user,
-      body: data[i].body,
-      url: data[i].url,
-      repository: data[i].repository,
-      contestid: data[i].contestid,
-      created: data[i].created,
-      enabled: data[i].enabled
-    }
-    addPullRequest(newData)
-  }
-  
-  
-
+function updatePullRequests(data) {
+	for (var i = 0; i < data.length; i++) {
+		var newData = {
+			pr: data[i].pr,
+			title: data[i].title,
+			user: data[i].user,
+			body: data[i].body,
+			url: data[i].url,
+			repository: data[i].repository,
+			contestid: data[i].contestid,
+			created: data[i].created,
+			enabled: data[i].enabled,
+		};
+		addPullRequest(newData);
+	}
 }
 
-function addPullRequest(data){
-  console.log(data)
-  var ref = db.ref("/pullrequests/" + data.contestid + "/" + data.repository + "/" + data.pr);
+function addPullRequest(data) {
+	console.log(data);
+	var ref = db.ref(
+		"/pullrequests/" + data.contestid + "/" + data.repository + "/" + data.pr
+	);
 	ref.set(data);
 }
 
@@ -172,17 +169,104 @@ app.post("/getpullrequests", (req, res) => {
 	var ref = db.ref("/pullrequests/" + contestid);
 	ref.once("value", function (snapshot) {
 		var data = snapshot.val();
-    var pullrequests = []
-    for (const [user_key, user_value] of Object.entries(data)) {
-      for (const [repo_key, repo_value] of Object.entries(data[user_key])) {
-        for (const [pullrequest_key, pullrequest_value] of Object.entries(data[user_key][repo_key])) {
-          pullrequests.push(data[user_key][repo_key][pullrequest_key])
-        }
-      }
-    }
+		var pullrequests = [];
+		for (const [user_key, user_value] of Object.entries(data)) {
+			for (const [repo_key, repo_value] of Object.entries(data[user_key])) {
+				for (const [pullrequest_key, pullrequest_value] of Object.entries(
+					data[user_key][repo_key]
+				)) {
+					pullrequests.push(data[user_key][repo_key][pullrequest_key]);
+				}
+			}
+		}
 		res.json(pullrequests);
 	});
 });
 
+/*app.post("/getpullrequests", (req, res) => {
+	var contestid = req.body.contestid;
+	var repository = req.body.repository;
+	var ref = db.ref("/pullrequests/" + contestid + "/" + repository);
+	ref.once("value", function (snapshot) {
+		var data = snapshot.val();
+		var pullrequests = [];
+		for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
+			if (data[pullrequest_key]["enabled"] == true) {
+				pullrequests.push(data[pullrequest_key]);
+			}
+		}
+		res.json(pullrequests);
+	});
+});*/
+
+app.post("/gettask", (req, res) => {
+	var contestid = req.body.contestid;
+	var repositoryid = req.body.repositoryid;
+	var taskData;
+  var task = {}
+
+	getTask(contestid, repositoryid)
+		.then((result) => {
+			taskData = result;
+		})
+		.then(() => getTaskPullRequests(contestid, taskData))
+    .then(result => {
+      task['name'] = taskData.name;
+      task['description'] = taskData.description;
+      task['url'] = taskData.url;
+      task['pullrequests'] = result;  
+    })
+    .then(()=> getContest(contestid))
+    .then(result => {
+      task['contest-name'] = result.name;
+      task['contest-description'] = result.description;
+      task['contest-funding'] = result.funding;
+      task['contest-startDate'] = result.startDate;
+      task['contest-endDate'] = result.endDate;
+      task['contest-logourl'] = result.logourl;
+      res.json(task)
+    });
+});
+
+function getTask(contestid, repositoryid) {
+	return new Promise((resolve, reject) => {
+		var ref = db.ref("/repository/" + contestid + "/" + repositoryid);
+		ref.once("value", function (snapshot) {
+			var data = snapshot.val();
+			resolve(data);
+		});
+	});
+}
+
+function getContest(contestid){
+  console.log("fetching  "+ contestid)
+  return new Promise((resolve, reject) => {
+		var ref = db.ref("/contest/" + contestid);
+		ref.once("value", function (snapshot) {
+			var data = snapshot.val();
+      console.log(data)
+			resolve(data);
+		});
+	});
+}
+
+function getTaskPullRequests(contestid, repository) {
+	return new Promise((resolve, reject) => {
+
+		var repositoryPath = repository.url.split("/");
+		repositoryPath = repositoryPath[repositoryPath.length-2] + "/" + repositoryPath[repositoryPath.length-1];
+		var ref = db.ref("/pullrequests/" + contestid + "/" + repositoryPath);
+		ref.once("value", function (snapshot) {
+			var data = snapshot.val();
+			var pullrequests = [];
+			for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
+				if (data[pullrequest_key]["enabled"] == true) {
+					pullrequests.push(data[pullrequest_key]);
+				}
+			}
+			resolve(pullrequests);
+		});
+	});
+}
 
 exports.app = functions.https.onRequest(app);

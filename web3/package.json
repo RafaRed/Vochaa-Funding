@@ -23,6 +23,7 @@
     "react-scripts": "5.0.0",
     "redux": "^4.1.2",
     "reselect": "^4.1.5",
+    "seedrandom": "^3.0.5",
     "web-vitals": "^2.1.4",
     "web3": "^1.7.0",
     "web3-react": "4.0.3"

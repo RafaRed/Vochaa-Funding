@@ -1,12 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
 import { useParams } from "react-router-dom";
 import "../css/Task.css";
+import { getTask } from "../model/Calls/Database";
+import moment from "moment";
+import ReactMarkdown from "react-markdown";
+import seedrandom from 'seedrandom'
+
 
 function Task() {
 	const [username, setUsername] = useState("");
 	const params = useParams();
+	const [search, setSearch] = useState();
+	const [tasks, setTasks] = useState({
+		name: "Task Name",
+		description: "Task description",
+		"contest-startDate": 0,
+		"contest-endDate": 0,
+	});
+	useEffect(() => {
+		loadTask(params, setTasks);
+	}, []);
+	var seed = 741852963;
+
+
+	
+	var formatter = new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+
+		// These options are needed to round to whole numbers if that's what you want.
+		//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+		//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+	});
+
 	return (
 		<>
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
@@ -19,39 +47,39 @@ function Task() {
 									<img src=""></img>
 								</div>
 								<div className="task-data">
-									<h2>Task Name</h2>
-									<p className="task-date">From 03/10/2022 to 03/15/2022</p>
-									<a
-										className="task-url"
-										href="https://github.com/sshaw/export-pull-requests/issues/23">
-										https://github.com/sshaw/export-pull-requests/issues/23
+									<h2>{tasks.name}</h2>
+									<p className="task-date">
+										From {moment.unix(tasks["contest-startDate"]).format("MM/DD/YYYY")} to{" "}
+										{moment.unix(tasks["contest-endDate"]).format("MM/DD/YYYY")}
+									</p>
+									<a className="task-url" href={tasks["url"]}>
+										{tasks["url"]}
 									</a>
 								</div>
 							</div>
-							<p className="task-description">
-								Lorem Ipsum is simply dummy text of the printing and typesetting
-								industry. Lorem Ipsum has been the industry's standard dummy text ever
-								since the has been the industry's standard dummy text ever since the
-								Lorem Ipsum is simply dummy text of the printing and typesetting
-								industry. Lorem Ipsum has been the industry's standard dummy text ever
-								since the has been the industry's standard dummy text ever since the
-							</p>
+							<p className="task-description">{tasks.description}</p>
 						</div>
 						<div className="block-contest">
-							<div className="contest-logo">
-								<img src=""></img>
-							</div>
-							<h2 className="contest-name">Contest Name</h2>
-                            <p className="contest-pool">Funding Pool</p>
-                            <h2 className="contest-pool-value">$80.000</h2>
+							<img className="contest-logo" src={tasks["contest-logourl"]}></img>
+							<h2 className="contest-name">{tasks["contest-name"]}</h2>
+							<p className="contest-pool">Funding Pool</p>
+							<h2 className="contest-pool-value">
+								{formatter.format(tasks["contest-funding"])}
+							</h2>
 						</div>
 					</div>
 					<div className="search-bar">
-						<input type="text" id="fname" name="fname" className="block-input" />
+						<input
+							type="text"
+							id="fname"
+							name="fname"
+							className="block-input"
+							onChange={(val) => setSearch(val.target.value)}
+						/>
 						<img src="/images/search.png" />
 					</div>
 					<div className="board">
-						<FetchPullRequests params={params}></FetchPullRequests>
+						<FetchPullRequests params={params} tasks={tasks} search={search} seed={seed}></FetchPullRequests>
 					</div>
 				</div>
 			</div>
@@ -59,36 +87,66 @@ function Task() {
 	);
 }
 
-function FetchPullRequests({params}) {
-	return [PullRequest(params), PullRequest(params), PullRequest(params)];
+function loadTask(params, setTasks) {
+	getTask(params.contest, params.task).then((data) => setTasks(data));
 }
 
-function PullRequest(params) {
+function FetchPullRequests({ params, tasks, search, seed}) {
+	var taskList = [];
+	var rng=seedrandom(seed);
+
+	if (tasks !== undefined && tasks.pullrequests !== undefined) {
+		for (var i = 0; i < tasks.pullrequests.length; i++) {
+			if(isOnSearch(tasks.pullrequests[i], search)){
+				taskList.push(PullRequest(params, tasks.pullrequests[i]));
+			}
+			
+		}
+	}
+	taskList = taskList.sort(() => rng() - 0.5);
+	return taskList;
+}
+
+
+function isOnSearch(task, search){
+	if (search === undefined  || search===""|| searchCointains(task.title,search)|| searchCointains(task.pr,search) || searchCointains("#"+task.pr,search) || searchCointains(task.user,search)) {
+		return true
+	}
+	else{
+		return false;
+	}
+}
+
+function searchCointains(string,search){
+	return string.toLowerCase().startsWith(search.toLowerCase())
+}
+function PullRequest(params, task) {
 	return (
-		<div className="pr">
-			<p className="pr-id">#1</p>
-			<p className="pr-name">Pull Request Big Title</p>
+		<div className="pr" key={task.pr}>
+			<p className="pr-id">#{task.pr}</p>
+			<p className="pr-name">{task.title}</p>
 			<div className="pr-info">
-				<p>by</p> <a className="pr-author">Author Name</a> <p>at</p>
-				<p className="pr-date">03/14/2022</p>
+				<p>by</p>{" "}
+				<a className="pr-author" href={"https://github.com/" + task.user}>
+					{task.user}
+				</a>{" "}
+				<p>at</p>
+				<p className="pr-date">{task.created}</p>
 			</div>
 			<p className="pr-description">
-				Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-				Lorem Ipsum has been the industry's standard dummy text ever since the has
-				been the industry's standard dummy text ever since the
+				<ReactMarkdown>{task.body}</ReactMarkdown>
 			</p>
 			<div className="divider"></div>
-			<p className="pr-from">
-				From <a>Repository Title</a>
-			</p>
+
 			<p>Contributors</p>
-			<p>50</p>
+			<p className="pr-contributors">50</p>
 			<p>Value Match</p>
 			<p>$600 0.05%</p>
-            <a className="view-button-wrapper" href={"/contest/"+params.contest+"/taskid/"+"proposalid"}>
-                <p className="view-button">View More</p>
-            </a>
-            
+			<a
+				className="view-button-wrapper"
+				href={"/contest/" + params.contest + "/taskid/" + "proposalid"}>
+				<p className="view-button">View More</p>
+			</a>
 		</div>
 	);
 }
