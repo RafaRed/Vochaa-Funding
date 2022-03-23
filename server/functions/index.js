@@ -167,4 +167,22 @@ function addPullRequest(data){
 	ref.set(data);
 }
 
+app.post("/getpullrequests", (req, res) => {
+	var contestid = req.body.contestid;
+	var ref = db.ref("/pullrequests/" + contestid);
+	ref.once("value", function (snapshot) {
+		var data = snapshot.val();
+    var pullrequests = []
+    for (const [user_key, user_value] of Object.entries(data)) {
+      for (const [repo_key, repo_value] of Object.entries(data[user_key])) {
+        for (const [pullrequest_key, pullrequest_value] of Object.entries(data[user_key][repo_key])) {
+          pullrequests.push(data[user_key][repo_key][pullrequest_key])
+        }
+      }
+    }
+		res.json(pullrequests);
+	});
+});
+
+
 exports.app = functions.https.onRequest(app);

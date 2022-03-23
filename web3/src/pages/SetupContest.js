@@ -5,7 +5,7 @@ import "../css/SetupContest.css";
 import injectSheet from "react-jss";
 import Papa from "papaparse";
 import ReactMarkdown from "react-markdown";
-import { updatePullRequests } from "../model/Calls/Database";
+import { updatePullRequests, getPullRequests } from "../model/Calls/Database";
 
 function SetupContest() {
 	const [username, setUsername] = useState("");
@@ -16,6 +16,10 @@ function SetupContest() {
 	};
 	const [pullrequests, setPullrequests] = useState([]);
 	const params = useParams();
+	useEffect(()=>{
+		FetchPullRequests(params.contest,setPullrequests)
+	},[])
+	
 
 	return (
 		<>
@@ -58,7 +62,7 @@ function SetupContest() {
 							<div className="buttons">
 								<input
 									ref={fileInput}
-									onChange={(e) => upload(e, setArray, array, params, setPullrequests)}
+									onChange={(e) => upload(e, setArray, array, params, setPullrequests, pullrequests)}
 									type="file"
 									style={{ display: "none" }}
 								/>
@@ -69,7 +73,7 @@ function SetupContest() {
 							</div>
 						</div>
 						<div className="divider"></div>
-						<PullRequests array={array}></PullRequests>
+						<PullRequests pullrequests={pullrequests}></PullRequests>
 					</div>
 				</div>
 			</div>
@@ -77,20 +81,25 @@ function SetupContest() {
 	);
 }
 
-function upload(e, setArray, array, params, setPullrequests) {
+function FetchPullRequests(contestid,setPullrequests){
+	getPullRequests(contestid)
+	.then(data => setPullrequests(data))
+}
+
+function upload(e, setArray, array, params, setPullrequests, pullrequests) {
 	const file = e.target.files[0];
 	const fileReader = new FileReader();
 	if (file) {
 		fileReader.onload = function (event) {
 			const csvOutput = event.target.result;
-			loadCsv(csvOutput, setArray, array, params, setPullrequests);
+			loadCsv(csvOutput, setArray, array, params, setPullrequests,pullrequests);
 		};
 
 		fileReader.readAsText(file);
 	}
 }
 
-function loadCsv(string, setArray, array, params, setPullrequests) {
+function loadCsv(string, setArray, array, params, setPullrequests,pullrequests) {
 	var newarray = Papa.parse(string, { header: true }).data
 	setArray(newarray);
 
@@ -113,18 +122,40 @@ function loadCsv(string, setArray, array, params, setPullrequests) {
 				newPullRequests.push(newData)
 			}
 		}
-		setPullrequests(newPullRequests)
+		//setPullrequests(pullrequests => ([...pullrequests, ...newPullRequests])) APPEND ARRAYS
+		mergeArrays(pullrequests,newPullRequests,setPullrequests)
 	}
 }
 
+function mergeArrays(pullrequests,newPullRequests,setPullrequests){
+	var newArray = newPullRequests;
+	for(var i = 0; i < pullrequests.length; i++){
+		var hasValue = false;
+		for( var j = 0; j < newArray.length; j++){
+			
+			//console.log(pullrequests[i].pr === newArray[j].pr)
+			if(pullrequests[i].pr === newArray[j].pr && pullrequests[i].repository === newArray[j].repository) // Check if not contains this value, if so keep the newer.
+			{
+				//console.log(pullrequests[i].pr)
+				hasValue = true;
+				newArray[j]['updated'] = true;
+			}
+		}
+		console.log(hasValue)
+		if(hasValue === false){
+			newArray.push(pullrequests[i])
+		}
+	}
+	setPullrequests(newArray)
+}
 
-function PullRequests(array) {
+
+function PullRequests(pullrequests) {
 	const pulls = [];
-	//console.log(array);
-	if (array !== undefined && array.array != undefined) {
-		for (var i = 0; i < array.array.length; i++) {
+	if (pullrequests !== undefined && pullrequests.pullrequests !== undefined) {
+		for (var i = 0; i < pullrequests.pullrequests.length; i++) {
 			pulls.push(
-				<PullRequestLayout key={i} array={array.array} i={i}></PullRequestLayout>
+				<PullRequestLayout key={i} pullrequest={pullrequests.pullrequests[i]} i={i}></PullRequestLayout>
 			);
 		}
 	}
@@ -132,7 +163,8 @@ function PullRequests(array) {
 	return pulls;
 }
 
-function PullRequestLayout({ array, i }) {
+function PullRequestLayout({ pullrequest, i }) {
+	//console.log(pullrequest)
 	return (
 		<div className="pr-line">
 			<input
@@ -142,24 +174,24 @@ function PullRequestLayout({ array, i }) {
 				name="checkbox-pull"></input>
 			<div className="pr">
 				<div className="pr-header" onClick={() => toggleClass(i)}>
-					<p className="pr-id">#{array[i]["#"]}</p>
-					<p className="pr-title">{array[i].Title}</p>
-					<p className="pr-author"> - {array[i].User}</p>
+					<p className="pr-id">#{pullrequest.pr}</p>
+					<p className="pr-title">{pullrequest.title}</p>
+					<p className="pr-author"> - {pullrequest.user}</p>
 				</div>
 				<div id={"id-" + i} className={["pr-content", "hidden"].join(" ")}>
 					<p className="pr-body">
-						<ReactMarkdown>{array[i].Body}</ReactMarkdown>
+						<ReactMarkdown>{pullrequest.body}</ReactMarkdown>
 					</p>
-					<a className="pr-url" href={array[i].URL}>
-						{array[i].URL}
+					<a className="pr-url" href={pullrequest.url}>
+						{pullrequest.url}
 					</a>
 					<p className="pr-repository">
 						<b>Repo: </b>
-						{array[i].Repository}
+						{pullrequest.repository}
 					</p>
 					<p className="pr-created">
 						<b>Openned at: </b>
-						{array[i].Created}
+						{pullrequest.created}
 					</p>
 				</div>
 			</div>
