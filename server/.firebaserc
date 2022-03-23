@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "vochafunding"
-  }
+    "default": "vochafunding",
+    "vochaafunding": "vochaafunding"
+  },
+  "targets": {}
 }

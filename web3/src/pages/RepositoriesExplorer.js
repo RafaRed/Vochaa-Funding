@@ -8,6 +8,7 @@ import { loadTasks } from "../model/Calls/Database";
 function RepositoriesExplorer(props) {
 	const [username, setUsername] = useState("");
 	const params = useParams();
+	const [taskList,setTaskList] = useState([]);
 	return (
 		<>
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
@@ -31,7 +32,7 @@ function RepositoriesExplorer(props) {
 					</div>
 
 					<div className="block">
-						<LoadTasks params={params}></LoadTasks>
+						<LoadTasks params={params} taskList={taskList} setTaskList={setTaskList}></LoadTasks>
 					</div>
 				</div>
 			</div>
@@ -39,18 +40,21 @@ function RepositoriesExplorer(props) {
 	);
 }
 
-function LoadTasks({ params }) {
-	const [taskList,setTaskList] = useState([]);
-	useEffect(()=>{
-		var newTaskList = []
-		loadTasks(params.contest).then((tasks) => {
-			for (const [key, value] of Object.entries(tasks)) {
-				newTaskList.push(Task(tasks[key],key));
-			}
-			setTaskList(newTaskList)
-		},[]);
+function LoadTasks({ params, taskList, setTaskList}) {
 
-	})
+		useEffect(()=>{
+			var newTaskList = []
+			loadTasks(params.contest).then((tasks) => {
+				for (const [key, value] of Object.entries(tasks)) {
+					newTaskList.push(Task(tasks[key],key));
+				}
+				setTaskList(newTaskList)
+	
+			});
+		},[])
+		
+
+
 	
 	return taskList;
 }
