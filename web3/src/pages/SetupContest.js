@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../css/SetupContest.css";
 import injectSheet from "react-jss";
 import Papa from "papaparse";
 import ReactMarkdown from "react-markdown";
+import { updatePullRequests } from "../model/Calls/Database";
 
 function SetupContest() {
 	const [username, setUsername] = useState("");
@@ -12,6 +14,8 @@ function SetupContest() {
 	const selectFile = () => {
 		fileInput.current.click();
 	};
+	const [pullrequests, setPullrequests] = useState([]);
+	const params = useParams();
 
 	return (
 		<>
@@ -54,14 +58,14 @@ function SetupContest() {
 							<div className="buttons">
 								<input
 									ref={fileInput}
-									onChange={(e) => upload(e, setArray)}
+									onChange={(e) => upload(e, setArray, array, params, setPullrequests)}
 									type="file"
 									style={{ display: "none" }}
 								/>
 								<button onClick={selectFile} className="import">
 									IMPORT CSV
 								</button>
-								<button className="save">SAVE</button>
+								<button className="save" onClick={()=>updatePullRequests(params.contest,pullrequests)}>SAVE</button>
 							</div>
 						</div>
 						<div className="divider"></div>
@@ -73,26 +77,50 @@ function SetupContest() {
 	);
 }
 
-function upload(e, setArray) {
+function upload(e, setArray, array, params, setPullrequests) {
 	const file = e.target.files[0];
 	const fileReader = new FileReader();
 	if (file) {
 		fileReader.onload = function (event) {
 			const csvOutput = event.target.result;
-			loadCsv(csvOutput, setArray);
+			loadCsv(csvOutput, setArray, array, params, setPullrequests);
 		};
 
 		fileReader.readAsText(file);
 	}
 }
 
-function loadCsv(string, setArray) {
-	setArray(Papa.parse(string, { header: true }).data);
+function loadCsv(string, setArray, array, params, setPullrequests) {
+	var newarray = Papa.parse(string, { header: true }).data
+	setArray(newarray);
+
+	var newPullRequests = []
+	if (newarray !== undefined) {
+		var prs = newarray;
+		for (var i = 0; i < prs.length; i++) {
+			if(prs[i]["#"] !== undefined){
+				var newData = {
+					pr: prs[i]["#"],
+					title: prs[i].Title,
+					user: prs[i].User,
+					body: prs[i].Body,
+					url: prs[i].URL,
+					repository: prs[i].Repository,
+					contestid: params.contest,
+					created: prs[i].Created,
+					enabled: false
+				};
+				newPullRequests.push(newData)
+			}
+		}
+		setPullrequests(newPullRequests)
+	}
 }
+
 
 function PullRequests(array) {
 	const pulls = [];
-	console.log(array);
+	//console.log(array);
 	if (array !== undefined && array.array != undefined) {
 		for (var i = 0; i < array.array.length; i++) {
 			pulls.push(
@@ -100,14 +128,18 @@ function PullRequests(array) {
 			);
 		}
 	}
-	console.log(pulls);
+	//console.log(pulls);
 	return pulls;
 }
 
 function PullRequestLayout({ array, i }) {
 	return (
 		<div className="pr-line">
-			<input className="pr-checkbox" type="checkbox" id="pull" name="checkbox-pull"></input>
+			<input
+				className="pr-checkbox"
+				type="checkbox"
+				id="pull"
+				name="checkbox-pull"></input>
 			<div className="pr">
 				<div className="pr-header" onClick={() => toggleClass(i)}>
 					<p className="pr-id">#{array[i]["#"]}</p>
