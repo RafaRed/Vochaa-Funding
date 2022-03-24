@@ -3,7 +3,7 @@ import { reduceVote, addVote } from "./CreditsController";
 
 
 export function VoteButton(props) {
-	//console.log(props)
+	console.log(props)
 	return (
 		<div className="vote-button">
 			<div
@@ -12,8 +12,8 @@ export function VoteButton(props) {
 				-
 			</div>
 			<div className="quantity">
-				{props.vote !== undefined && props.vote.length > 0
-					? props.vote[props.index]
+				{props.vote !== undefined
+					? props.vote
 					: 0}
 			</div>
 			<div

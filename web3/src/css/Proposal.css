@@ -282,6 +282,15 @@ hr.solid-80 {
     font-weight: 700;
 }
 
+.proposal .vote-status-match{
+    
+    display: flex;
+	flex-direction: column;
+    margin-left: 20px;
+    margin-right: 20px;
+    justify-content: space-between;
+}
+
 .proposal .vote-status .progress-bar{
     border-radius: 10px;
     margin-left: 20px;

@@ -1,7 +1,7 @@
 import React from "react";
 import { VoteButton } from "./VoteButton";
 
-export function VoteOptions(props) {
+/*export function VoteOptions(props) {
 	var options = [];
 
 	if (props.options !== undefined) {
@@ -24,4 +24,21 @@ export function VoteOptions(props) {
 	} else {
 		return <></>;
 	}
+}*/
+
+export function VoteOptions(props) {
+	var options = [];
+
+	return (
+		<div className="vote-option">
+			Credits
+			<VoteButton
+				button={props.button}
+				vote={props.vote}
+				setVote={props.setVote}
+				credits={props.credits}
+				setCurrentCredits={props.setCurrentCredits}
+			/>
+		</div>
+	);
 }

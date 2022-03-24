@@ -8,14 +8,14 @@ import { ConfirmVoteButton } from "../components/Proposals/ConfirmVoteButton";
 import { VoteOptions } from "../components/Proposals/VoteOptions";
 import { VoteStatusBar } from "../components/Proposals/VoteStatusBar";
 import { LoadVotes } from "../components/Proposals/LoadVotes";
-import { getPullrequest, getVotes } from "../model/Calls/Database";
+import { getPullrequest, getVotes, sendVotes } from "../model/Calls/Database";
 import ReactMarkdown from "react-markdown";
 
 function Proposal(props) {
 	const [project, setProject] = useState({ name: "#1 - Pull Request Title", symbol: "", address: "" });
-	const [credits, setCredits] = useState(0);
-	const [currentCredits, setCurrentCredits] = useState(0);
-	const [vote, setVote] = useState([]);
+	const [credits, setCredits] = useState(100);
+	const [currentCredits, setCurrentCredits] = useState(100);
+	const [vote, setVote] = useState(0);
 	const [votes, setVotes] = useState(0)
 	const [currentVotes, setCurrentVotes] = useState([]);
 	const [proposal, setProposal] = useState({
@@ -45,7 +45,7 @@ function Proposal(props) {
 
 
 	var now = moment().unix();
-	var status = getStatus(now, proposal);
+	var status = getStatus(now, votes);
 
 	return (
 		<div>
@@ -87,14 +87,20 @@ function Proposal(props) {
 						/>
 
 						<ConfirmVoteButton
-							props={props}
-							credits={credits}
-							currentCredits={currentCredits}
+							contestid={params.contest}
+							repositoryid={params.task}
+							pullrequestid={params.proposal}
 							vote={vote}
-							proposal={proposal}
-							username={username}
-							params={params}
-							status={status}></ConfirmVoteButton>
+							status={status}
+							currentCredits={currentCredits}
+							credits={credits}
+							props={props}
+							startDate={task.startDate}
+							endDate={task.endDate}
+							username={username}>
+							
+
+							</ConfirmVoteButton>
 					</div>
 				</div>
 				<div className="info-block">
@@ -126,9 +132,8 @@ function Proposal(props) {
 						<hr className="solid-80"></hr>
 					</div>
 					<VoteStatusBar
-						options={proposal.options}
-						button={props.classes.setButton}
-						currentVotes={currentVotes}
+						votes={votes}
+						task={task}
 					/>
 				</div>
 			</div>
@@ -144,9 +149,9 @@ function fetchVotes(params, setVotes){
 	getVotes(params.contest,params.task,params.proposal)
 	.then(data => setVotes(data))
 }
-function getStatus(now, proposal) {
+function getStatus(now, votes) {
 	// 0 = waiting | 1 = running | 2 = ended
-	return now > proposal.startDate ? (now < proposal.endDate ? 1 : 2) : 0;
+	return now > votes.startDate ? (now < votes.endDate ? 1 : 2) : 0;
 }
 
 const styles = {

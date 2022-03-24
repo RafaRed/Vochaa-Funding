@@ -8,10 +8,7 @@ export function ConfirmVoteButton(props) {
 			onClick={props.status == 1
 				? props.currentCredits !== props.credits
 					? () => SendVotes(
-						props.vote,
-						props.params.project,
-						props.params.proposal,
-						props.wallet
+						props.contestid, props.repositoryid, props.pullrequestid, props.vote, props.username
 					)
 					: () => { }
 				: () => { }}
@@ -21,7 +18,7 @@ export function ConfirmVoteButton(props) {
 				props.status,
 				props.props
 			)}>
-			{GetStatusText(props.status, props.proposal)}
+			{GetStatusText(props.status, props.startDate, props.endDate)}
 		</button>
 	);
 }
@@ -33,12 +30,12 @@ function GetStatusStyle(currentCredits, credits, status, props) {
 			: "send-vote-disabled",
 	].join(" ");
 }
-function GetStatusText(status, proposal) {
+function GetStatusText(status, startDate, endDate) {
 	return status == 0
 		? "STARTS ON - " +
-		moment.unix(proposal.startDate).format("DD MMM YYYY hh:mm a").toUpperCase()
+		moment.unix(startDate).format("DD MMM YYYY hh:mm a").toUpperCase()
 		: status == 1
 			? "SEND VOTE"
 			: "ENDED ON - " +
-			moment.unix(proposal.endDate).format("DD MMM YYYY hh:mm a").toUpperCase();
+			moment.unix(endDate).format("DD MMM YYYY hh:mm a").toUpperCase();
 }

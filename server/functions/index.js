@@ -180,7 +180,7 @@ app.post("/getpullrequests", (req, res) => {
 				}
 			}
 		}
-		console.log(pullrequests)
+		console.log(pullrequests);
 		res.json(pullrequests);
 	});
 });
@@ -282,14 +282,14 @@ function getTaskPullRequests(contestid, repository) {
 		ref.once("value", function (snapshot) {
 			var pullrequests = [];
 			if (snapshot.exists()) {
-			var data = snapshot.val();
-			
-			for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
-				if (data[pullrequest_key]["enabled"] == true) {
-					pullrequests.push(data[pullrequest_key]);
+				var data = snapshot.val();
+
+				for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
+					if (data[pullrequest_key]["enabled"] == true) {
+						pullrequests.push(data[pullrequest_key]);
+					}
 				}
 			}
-		}
 			resolve(pullrequests);
 		});
 	});
@@ -298,51 +298,134 @@ function getTaskPullRequests(contestid, repository) {
 app.post("/getvotes", (req, res) => {
 	var votes = 0;
 	var totalVotes = 0;
+	var funding = 0;
 	var contestid = req.body.contestid;
 	var repositoryid = req.body.repositoryid;
 	var pullrequestid = req.body.pullrequestid;
 
-	getPullrequestVotes(contestid,repositoryid,pullrequestid)
-	.then(result => {votes=result})
-	.then(()=> getContestVotes(contestid))
-	.then(result => {
-		totalVotes = result;
-		console.log(votes, totalVotes);
-		res.json({"votes":votes, "totalVotes":totalVotes})
-	})
+	getPullrequestVotes(contestid, repositoryid, pullrequestid)
+		.then((result) => {
+			votes = result;
+		})
+		.then(() => getContestVotes(contestid))
+		.then((result) => {
+			totalVotes = result.votes;
 
-	
+			res.json({
+				votes: votes,
+				totalVotes: totalVotes,
+				funding: result.funding,
+				startDate: result.startDate,
+				endDate: result.endDate,
+			});
+		});
 });
 
 function getContestVotes(contestid) {
 	return new Promise((resolve, reject) => {
-		var ref = db.ref(
-			"/contest/" + contestid
-		);
+		var ref = db.ref("/contest/" + contestid);
 		ref.once("value", function (snapshot) {
 			var data = snapshot.val();
 			votes = data.votes;
+			resolve({
+				votes: votes,
+				funding: data.funding,
+				startDate: data.startDate,
+				endDate: data.endDate,
+			});
+		});
+	});
+}
+
+function getPullrequestVotes(contestid, repositoryid, pullrequestid) {
+	var votes = 0;
+	return new Promise((resolve, reject) => {
+		var ref = db.ref(
+			"/votes/" + contestid + "/" + repositoryid + "/" + pullrequestid
+		);
+		ref.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				var data = snapshot.val();
+				votes = data.votes;
+			}
+
 			resolve(votes);
 		});
 	});
 }
 
-function getPullrequestVotes(contestid, repositoryid, pullrequestid){
-	var votes = 0;
-	return new Promise((resolve,reject)=>{
-		var ref = db.ref(
-			"/votes/" + contestid + "/" + repositoryid + "/" + pullrequestid
-		);
-		ref.once("value", function (snapshot) {
-			
-			if (snapshot.exists()) {
-				var data = snapshot.val();
-				votes = data.votes;
+app.post("/sendvotes", (req, res) => {
+	var contestid = req.body.contestid;
+	var repositoryid = req.body.repositoryid;
+	var pullrequestid = req.body.pullrequestid;
+	var idToken = req.body.idToken;
+	var votes = req.body.votes;
+	var githubData;
+	var username;
+
+	var idToken = req.body.idToken;
+	getGithubData(idToken)
+		.then((data) => {
+			githubData = data;
+		})
+		.then(() => getUsername(githubData))
+		.then((result) => {
+			username = result;
+			if (isAllowToVote(githubData)) {
+				userHaveCredits(username, votes).then((haveCredits) => {
+					if (haveCredits) {
+						vote(username, contestid, repositoryid, pullrequestid, votes);
+					}
+				});
 			}
-	
-			resolve(votes)
 		});
-	})
+});
+
+function isAllowToVote(githubData) {
+	return true;
+}
+function userHaveCredits(username, votes) {
+	return new Promise((resolve, reject) => {
+		resolve(true);
+	});
+}
+
+function vote(username, contestid, repositoryid, pullrequestid, votes) {
+	console.log(votes)
+	var ref = db.ref(
+		"/votes" +
+			"/" +
+			contestid +
+			"/" +
+			repositoryid +
+			"/" +
+			pullrequestid +
+			"/voters"
+	);
+	const votersRef = ref.push();
+	votersRef.set({
+		username: username,
+		votes: votes,
+	});
+
+	var voteRef = db.ref(
+		"/votes" +
+			"/" +
+			contestid +
+			"/" +
+			repositoryid +
+			"/" +
+			pullrequestid +
+			"/votes"
+	);
+	voteRef.transaction((current_value) => {
+		return (current_value || 0) + votes;
+	});
+
+	var contestVotesRef = db.ref("/contest" + "/" + contestid + "/votes");
+	contestVotesRef.transaction((current_value) => {
+		return (current_value || 0) + votes;
+	});
 }
 
 exports.app = functions.https.onRequest(app);
