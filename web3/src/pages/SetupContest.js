@@ -117,7 +117,7 @@ function loadCsv(string, setArray, array, params, setPullrequests,pullrequests) 
 					repository: prs[i].Repository,
 					contestid: params.contest,
 					created: prs[i].Created,
-					enabled: false
+					enabled: true
 				};
 				newPullRequests.push(newData)
 			}

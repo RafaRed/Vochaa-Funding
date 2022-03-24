@@ -8,7 +8,7 @@ import { ConfirmVoteButton } from "../components/Proposals/ConfirmVoteButton";
 import { VoteOptions } from "../components/Proposals/VoteOptions";
 import { VoteStatusBar } from "../components/Proposals/VoteStatusBar";
 import { LoadVotes } from "../components/Proposals/LoadVotes";
-import { getPullrequest } from "../model/Calls/Database";
+import { getPullrequest, getVotes } from "../model/Calls/Database";
 import ReactMarkdown from "react-markdown";
 
 function Proposal(props) {
@@ -16,6 +16,7 @@ function Proposal(props) {
 	const [credits, setCredits] = useState(0);
 	const [currentCredits, setCurrentCredits] = useState(0);
 	const [vote, setVote] = useState([]);
+	const [votes, setVotes] = useState(0)
 	const [currentVotes, setCurrentVotes] = useState([]);
 	const [proposal, setProposal] = useState({
 		name: "",
@@ -27,6 +28,7 @@ function Proposal(props) {
 	const params = useParams();
 	useEffect(()=>{
 		fetchTask(params,setTask)
+		fetchVotes(params,setVotes)
 	},[])
 
 	/*LoadVotes(
@@ -136,6 +138,11 @@ function Proposal(props) {
 function fetchTask(params, setTask){
 	getPullrequest(params.contest,params.task,params.proposal)
 	.then(data => setTask(data))
+}
+
+function fetchVotes(params, setVotes){
+	getVotes(params.contest,params.task,params.proposal)
+	.then(data => setVotes(data))
 }
 function getStatus(now, proposal) {
 	// 0 = waiting | 1 = running | 2 = ended
