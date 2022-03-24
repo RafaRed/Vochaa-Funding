@@ -22,8 +22,18 @@
 }
 
 .proposal .description{
+	width: 100%;
+	display:flex;
+	flex-direction: column;
+	flex-wrap: wrap;
 
 
+}
+
+.proposal .description p{
+	width: 100%;
+	margin-top: 20px;
+	word-wrap: break-word
 }
 .proposal .line {
 	display: flex;
@@ -54,7 +64,7 @@
 }
 
 .proposal .info .name {
-	font-size: 28px;
+	font-size: 20px;
 	font-weight: 700;
 	color: rgb(41, 41, 41);
 }
@@ -156,11 +166,10 @@ hr.solid {
 	user-select: none;
 }
 
-
+.proposal .author{
+	color:#3191ff;
+}
 .proposal a{
-    display: flex;
-    align-content: center;
-    justify-content: center;
     text-decoration:none
 }
 .proposal .send-vote {

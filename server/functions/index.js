@@ -183,49 +183,53 @@ app.post("/getpullrequests", (req, res) => {
 	});
 });
 
-/*app.post("/getpullrequests", (req, res) => {
-	var contestid = req.body.contestid;
-	var repository = req.body.repository;
-	var ref = db.ref("/pullrequests/" + contestid + "/" + repository);
-	ref.once("value", function (snapshot) {
-		var data = snapshot.val();
-		var pullrequests = [];
-		for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
-			if (data[pullrequest_key]["enabled"] == true) {
-				pullrequests.push(data[pullrequest_key]);
-			}
-		}
-		res.json(pullrequests);
-	});
-});*/
 
 app.post("/gettask", (req, res) => {
 	var contestid = req.body.contestid;
 	var repositoryid = req.body.repositoryid;
 	var taskData;
-  var task = {}
+	var task = {};
 
 	getTask(contestid, repositoryid)
 		.then((result) => {
 			taskData = result;
 		})
 		.then(() => getTaskPullRequests(contestid, taskData))
-    .then(result => {
-      task['name'] = taskData.name;
-      task['description'] = taskData.description;
-      task['url'] = taskData.url;
-      task['pullrequests'] = result;  
-    })
-    .then(()=> getContest(contestid))
-    .then(result => {
-      task['contest-name'] = result.name;
-      task['contest-description'] = result.description;
-      task['contest-funding'] = result.funding;
-      task['contest-startDate'] = result.startDate;
-      task['contest-endDate'] = result.endDate;
-      task['contest-logourl'] = result.logourl;
-      res.json(task)
-    });
+		.then((result) => {
+			task["name"] = taskData.name;
+			task["description"] = taskData.description;
+			task["url"] = taskData.url;
+			task["pullrequests"] = result;
+		})
+		.then(() => getContest(contestid))
+		.then((result) => {
+			task["contest-name"] = result.name;
+			task["contest-description"] = result.description;
+			task["contest-funding"] = result.funding;
+			task["contest-startDate"] = result.startDate;
+			task["contest-endDate"] = result.endDate;
+			task["contest-logourl"] = result.logourl;
+			res.json(task);
+		});
+});
+
+app.post("/getpullrequest", (req, res) => {
+	var contestid = req.body.contestid;
+	var repositoryid = req.body.repositoryid;
+	var pullrequestid = req.body.pullrequestid;
+	var taskData;
+	var repositoryPath;
+
+	getTask(contestid, repositoryid)
+		.then((result) => {
+			taskData = result;
+		})
+		.then(() => {
+			repositoryPath = taskData.url.split("/");
+			repositoryPath = repositoryPath[repositoryPath.length - 2] + "/" + repositoryPath[repositoryPath.length - 1];
+		})
+		.then(()=> getPullrequest(contestid,repositoryPath,pullrequestid))
+		.then(data => res.json(data));
 });
 
 function getTask(contestid, repositoryid) {
@@ -238,23 +242,38 @@ function getTask(contestid, repositoryid) {
 	});
 }
 
-function getContest(contestid){
-  console.log("fetching  "+ contestid)
-  return new Promise((resolve, reject) => {
+function getPullrequest(contestid, repositoryPath, pullrequestid) {
+	return new Promise((resolve,reject)=>{
+		var ref = db.ref("/pullrequests/" + contestid +"/"+repositoryPath+"/"+pullrequestid);
+		ref.once("value", function (snapshot) {
+			var data = snapshot.val();
+			console.log(data);
+			resolve(data);
+		});
+	})
+}
+
+function getContest(contestid) {
+	console.log("fetching  " + contestid);
+	return new Promise((resolve, reject) => {
 		var ref = db.ref("/contest/" + contestid);
 		ref.once("value", function (snapshot) {
 			var data = snapshot.val();
-      console.log(data)
+			console.log(data);
 			resolve(data);
 		});
 	});
 }
 
+
+
 function getTaskPullRequests(contestid, repository) {
 	return new Promise((resolve, reject) => {
-
 		var repositoryPath = repository.url.split("/");
-		repositoryPath = repositoryPath[repositoryPath.length-2] + "/" + repositoryPath[repositoryPath.length-1];
+		repositoryPath =
+			repositoryPath[repositoryPath.length - 2] +
+			"/" +
+			repositoryPath[repositoryPath.length - 1];
 		var ref = db.ref("/pullrequests/" + contestid + "/" + repositoryPath);
 		ref.once("value", function (snapshot) {
 			var data = snapshot.val();

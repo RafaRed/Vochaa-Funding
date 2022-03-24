@@ -1,4 +1,4 @@
-import { server, createcontest_path, gettasks_path, updatepullrequests_path, getpullrequests_path, gettask_path } from "../repository";
+import { server, createcontest_path, gettasks_path, updatepullrequests_path, getpullrequests_path, gettask_path, getpullrequest_path } from "../repository";
 import moment from "moment";
 import { getIdToken } from "./Auth";
 
@@ -89,6 +89,20 @@ export async function getTask(contestid, repositoryid){
     };
     return new Promise((resolve,reject)=>{
         fetch(server+gettask_path, requestOptions)
+        .then(response => response.json())
+        .then(data => resolve(data));
+    })
+}
+
+export async function getPullrequest(contestid, repositoryid,pullrequestid){
+    var data = {"contestid":contestid, "repositoryid":repositoryid, "pullrequestid":pullrequestid}
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    };
+    return new Promise((resolve,reject)=>{
+        fetch(server+getpullrequest_path, requestOptions)
         .then(response => response.json())
         .then(data => resolve(data));
     })

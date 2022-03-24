@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
@@ -8,6 +8,8 @@ import { ConfirmVoteButton } from "../components/Proposals/ConfirmVoteButton";
 import { VoteOptions } from "../components/Proposals/VoteOptions";
 import { VoteStatusBar } from "../components/Proposals/VoteStatusBar";
 import { LoadVotes } from "../components/Proposals/LoadVotes";
+import { getPullrequest } from "../model/Calls/Database";
+import ReactMarkdown from "react-markdown";
 
 function Proposal(props) {
 	const [project, setProject] = useState({ name: "#1 - Pull Request Title", symbol: "", address: "" });
@@ -20,8 +22,12 @@ function Proposal(props) {
 		description: "",
 		credits: "0",
 	});
+	const [task,setTask] = useState({});
 	const [username, setUsername] = useState("");
 	const params = useParams();
+	useEffect(()=>{
+		fetchTask(params,setTask)
+	},[])
 
 	/*LoadVotes(
 		params,
@@ -34,6 +40,8 @@ function Proposal(props) {
 		vote,
 		setVote
 	);*/
+
+
 	var now = moment().unix();
 	var status = getStatus(now, proposal);
 
@@ -44,19 +52,18 @@ function Proposal(props) {
 				<div className="wrapper">
 					<div className="header">
 						<div className="line">
-							<div className="image-block">
-								<img src={project.logo} />
-							</div>
+							{/*<div className="image-block">
+								<img src={task.logo} />
+							</div>*/}
 
 							<div className="info">
-								<p className="name">{project.name}</p>
-								<p className="address">{project.address}</p>
+								<p className="name">#{task.pr} - {task.title}</p>
 							</div>
 						</div>
 					</div>
 					<div className="block">
-						<p className="name">{proposal.name}</p>
-						<p className="description">{proposal.description}</p>
+						{/*<p className="name">{task.title}</p>*/}
+						<ReactMarkdown className="description">{task.body}</ReactMarkdown>
 					</div>
 					<div className="block vote-block">
 						<div className="vote-header">
@@ -95,16 +102,23 @@ function Proposal(props) {
 					</div>
 					<div className="line">
 						<p>Created by</p>
-						<p className="sender">{proposal.sender}</p>
+						<a className="author" href={"https://github.com/"+task.user}>{task.user}</a>
 					</div>
 					<div className="line">
+						<p>Creation Date</p>
+						<p>{task.created}</p>
+					</div>
+					<div className="line">
+						<a className="author" href={task.url}>View on Github</a>
+					</div>
+					{/*<div className="line">
 						<p>Start Date</p>
 						<p>{moment.unix(proposal.startDate).format("DD MMM YYYY hh:mm a")}</p>
 					</div>
 					<div className="line">
 						<p>End Date</p>
 						<p>{moment.unix(proposal.endDate).format("DD MMM YYYY hh:mm a")}</p>
-					</div>
+					</div>*/}
 					<div className="info-header-2">
 						<p className="title">Current Results</p>
 						<hr className="solid-80"></hr>
@@ -119,7 +133,10 @@ function Proposal(props) {
 		</div>
 	);
 }
-
+function fetchTask(params, setTask){
+	getPullrequest(params.contest,params.task,params.proposal)
+	.then(data => setTask(data))
+}
 function getStatus(now, proposal) {
 	// 0 = waiting | 1 = running | 2 = ended
 	return now > proposal.startDate ? (now < proposal.endDate ? 1 : 2) : 0;

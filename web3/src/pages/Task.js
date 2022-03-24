@@ -44,7 +44,7 @@ function Task() {
 						<div className="block-info">
 							<div className="block-wrapper">
 								<div className="logo">
-									<img src=""></img>
+									<img className="contest-logo" src={tasks["contest-logourl"]}></img>
 								</div>
 								<div className="task-data">
 									<h2>{tasks.name}</h2>
@@ -144,7 +144,7 @@ function PullRequest(params, task) {
 			<p>$600 0.05%</p>
 			<a
 				className="view-button-wrapper"
-				href={"/contest/" + params.contest + "/taskid/" + "proposalid"}>
+				href={"/contest/" + params.contest +"/"+params.task + "/"+task.pr}>
 				<p className="view-button">View More</p>
 			</a>
 		</div>
