@@ -107,7 +107,10 @@ function FetchPullRequests({ params, tasks, search, seed, votesList}) {
 				var votes;
 				var totalVotes = votesList['totalVotes']
 				var funding = votesList['funding']
-				votes = votesList.votes[tasks.pullrequests[i]['pr']]
+				if(votesList !== undefined && votesList.votes !== undefined)
+				{
+					votes = votesList.votes[tasks.pullrequests[i]['pr']]
+				}
 				if(votes === undefined){
 					votes = 0
 				}
