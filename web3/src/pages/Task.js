@@ -107,13 +107,20 @@ function FetchPullRequests({ params, tasks, search, seed, votesList}) {
 				var votes;
 				var totalVotes = votesList['totalVotes']
 				var funding = votesList['funding']
+				votes = votesList.votes[tasks.pullrequests[i]['pr']]
 				if(votes === undefined){
 					votes = 0
 				}
-				var percentage = Math.round((votes / totalVotes) * 100);
-				var valueMatch = formatter.format((funding / totalVotes) * votes)
-				votes = votesList.votes[tasks.pullrequests[i]['pr']]
+				//console.log("data:"+votes,totalVotes,funding)
+				var percentage = 0;
+				var valueMatch = 0;
+				if(votes !== 0 ){
+					percentage = Math.round((votes / totalVotes) * 100);
+					valueMatch = formatter.format((funding / totalVotes) * votes)
+				}
 				
+				
+				//console.log("result:"+votes,percentage,valueMatch,tasks.pullrequests[i]['pr'])
 				taskList.push(PullRequest(params, tasks.pullrequests[i], votes, percentage, valueMatch));
 			}
 			
@@ -137,7 +144,6 @@ function searchCointains(string,search){
 	return string.toLowerCase().startsWith(search.toLowerCase())
 }
 function PullRequest(params, task, votes, percentage, valueMatch) {
-	console.log(votes)
 	return (
 		<div className="pr" key={task.pr}>
 			<p className="pr-id">#{task.pr}</p>
