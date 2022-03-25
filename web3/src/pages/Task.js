@@ -3,16 +3,25 @@ import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
 import { useParams } from "react-router-dom";
 import "../css/Task.css";
-import { getTask } from "../model/Calls/Database";
+import { getAllPullrequestsVotes, getTask } from "../model/Calls/Database";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import seedrandom from 'seedrandom'
 
+var formatter = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "USD",
+
+	// These options are needed to round to whole numbers if that's what you want.
+	//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+	//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+});
 
 function Task() {
 	const [username, setUsername] = useState("");
 	const params = useParams();
 	const [search, setSearch] = useState();
+	const [votesList, setVotesList] = useState({});
 	const [tasks, setTasks] = useState({
 		name: "Task Name",
 		description: "Task description",
@@ -20,20 +29,16 @@ function Task() {
 		"contest-endDate": 0,
 	});
 	useEffect(() => {
+		loadVotes(params.contest,params.task,setVotesList)
 		loadTask(params, setTasks);
+		
 	}, []);
 	var seed = 741852963;
 
 
-	
-	var formatter = new Intl.NumberFormat("en-US", {
-		style: "currency",
-		currency: "USD",
 
-		// These options are needed to round to whole numbers if that's what you want.
-		//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-		//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-	});
+	
+	
 
 	return (
 		<>
@@ -79,7 +84,7 @@ function Task() {
 						<img src="/images/search.png" />
 					</div>
 					<div className="board">
-						<FetchPullRequests params={params} tasks={tasks} search={search} seed={seed}></FetchPullRequests>
+						<FetchPullRequests params={params} tasks={tasks} search={search} seed={seed} votesList={votesList}></FetchPullRequests>
 					</div>
 				</div>
 			</div>
@@ -91,14 +96,25 @@ function loadTask(params, setTasks) {
 	getTask(params.contest, params.task).then((data) => setTasks(data));
 }
 
-function FetchPullRequests({ params, tasks, search, seed}) {
+function FetchPullRequests({ params, tasks, search, seed, votesList}) {
 	var taskList = [];
 	var rng=seedrandom(seed);
+	
 
 	if (tasks !== undefined && tasks.pullrequests !== undefined) {
 		for (var i = 0; i < tasks.pullrequests.length; i++) {
 			if(isOnSearch(tasks.pullrequests[i], search)){
-				taskList.push(PullRequest(params, tasks.pullrequests[i]));
+				var votes;
+				var totalVotes = votesList['totalVotes']
+				var funding = votesList['funding']
+				if(votes === undefined){
+					votes = 0
+				}
+				var percentage = Math.round((votes / totalVotes) * 100);
+				var valueMatch = formatter.format((funding / totalVotes) * votes)
+				votes = votesList.votes[tasks.pullrequests[i]['pr']]
+				
+				taskList.push(PullRequest(params, tasks.pullrequests[i], votes, percentage, valueMatch));
 			}
 			
 		}
@@ -120,7 +136,8 @@ function isOnSearch(task, search){
 function searchCointains(string,search){
 	return string.toLowerCase().startsWith(search.toLowerCase())
 }
-function PullRequest(params, task) {
+function PullRequest(params, task, votes, percentage, valueMatch) {
+	console.log(votes)
 	return (
 		<div className="pr" key={task.pr}>
 			<p className="pr-id">#{task.pr}</p>
@@ -138,10 +155,10 @@ function PullRequest(params, task) {
 			</p>
 			<div className="divider"></div>
 
-			<p>Contributors</p>
-			<p className="pr-contributors">50</p>
+			<p>Votes</p>
+			<p className="pr-contributors">{votes}</p>
 			<p>Value Match</p>
-			<p>$600 0.05%</p>
+			<p>{valueMatch} {percentage}%</p>
 			<a
 				className="view-button-wrapper"
 				href={"/contest/" + params.contest +"/"+params.task + "/"+task.pr}>
@@ -149,6 +166,12 @@ function PullRequest(params, task) {
 			</a>
 		</div>
 	);
+}
+
+
+function loadVotes(contestid,repositoryid,setVotesList){
+	getAllPullrequestsVotes(contestid,repositoryid)
+	.then(data => setVotesList(data))
 }
 
 const styles = {

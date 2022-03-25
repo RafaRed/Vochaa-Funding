@@ -176,7 +176,9 @@ app.post("/getpullrequests", (req, res) => {
 				for (const [pullrequest_key, pullrequest_value] of Object.entries(
 					data[user_key][repo_key]
 				)) {
-					pullrequests.push(data[user_key][repo_key][pullrequest_key]);
+					var newData = data[user_key][repo_key][pullrequest_key]
+					newData['key'] = pullrequest_key
+					pullrequests.push(newData);
 				}
 			}
 		}
@@ -286,7 +288,9 @@ function getTaskPullRequests(contestid, repository) {
 
 				for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
 					if (data[pullrequest_key]["enabled"] == true) {
-						pullrequests.push(data[pullrequest_key]);
+						var newData = data[pullrequest_key]
+						newData['key'] = pullrequest_key;
+						pullrequests.push(newData);
 					}
 				}
 			}
@@ -381,6 +385,7 @@ app.post("/sendvotes", (req, res) => {
 		});
 });
 
+
 function isAllowToVote(githubData) {
 	return true;
 }
@@ -389,6 +394,7 @@ function userHaveCredits(username, votes) {
 		resolve(true);
 	});
 }
+
 
 function vote(username, contestid, repositoryid, pullrequestid, votes) {
 	console.log(votes)
@@ -427,5 +433,49 @@ function vote(username, contestid, repositoryid, pullrequestid, votes) {
 		return (current_value || 0) + votes;
 	});
 }
+
+app.post("/getpullrequestsvotes", (req, res) => {
+	var votes = {};
+	var totalVotes = 0;
+	var contestid = req.body.contestid;
+	var repositoryid = req.body.repositoryid;
+
+	getAllPullrequestVotes(contestid, repositoryid)
+		.then((result) => {
+			votes = result;
+		})
+		.then(() => getContestVotes(contestid))
+		.then((result) => {
+			totalVotes = result.votes;
+
+			res.json({
+				votes: votes,
+				totalVotes: totalVotes,
+				funding: result.funding,
+				startDate: result.startDate,
+				endDate: result.endDate,
+			});
+		});
+});
+
+function getAllPullrequestVotes(contestid, repositoryid) {
+	var votes = {};
+	return new Promise((resolve, reject) => {
+		var ref = db.ref(
+			"/votes/" + contestid + "/" + repositoryid
+		);
+		ref.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				var data = snapshot.val();
+				for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
+					votes[pullrequest_key] = data[pullrequest_key].votes
+				}
+			}
+
+			resolve(votes);
+		});
+	});
+}
+
 
 exports.app = functions.https.onRequest(app);

@@ -1,4 +1,4 @@
-import { server, createcontest_path, gettasks_path, updatepullrequests_path, getpullrequests_path, gettask_path, getpullrequest_path, getvotes_path, sendvotes_path } from "../repository";
+import { server, createcontest_path, gettasks_path, updatepullrequests_path, getpullrequests_path, gettask_path, getpullrequest_path, getvotes_path, sendvotes_path, getpullrequestvotes_path } from "../repository";
 import moment from "moment";
 import { getIdToken } from "./Auth";
 
@@ -132,6 +132,20 @@ export async function sendVotes(contestid, repositoryid, pullrequestid, votes){
     };
     return new Promise((resolve,reject)=>{
         fetch(server+sendvotes_path, requestOptions)
+        .then(response => response.json())
+        .then(data => resolve(data));
+    })
+}
+
+export async function getAllPullrequestsVotes(contestid, repositoryid){
+    var data = {"contestid":contestid, "repositoryid":repositoryid}
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    };
+    return new Promise((resolve,reject)=>{
+        fetch(server+getpullrequestvotes_path, requestOptions)
         .then(response => response.json())
         .then(data => resolve(data));
     })
