@@ -118,7 +118,7 @@ app.post("/gettasks", (req, res) => {
 	var ref = db.ref("/repository/" + contestid);
 	ref.once("value", function (snapshot) {
 		var data = snapshot.val();
-		console.log(data);
+		//console.log(data);
 		res.json(data);
 	});
 });
@@ -158,7 +158,7 @@ function updatePullRequests(data) {
 }
 
 function addPullRequest(data) {
-	console.log(data);
+	//console.log(data);
 	var ref = db.ref(
 		"/pullrequests/" + data.contestid + "/" + data.repository + "/" + data.pr
 	);
@@ -176,13 +176,13 @@ app.post("/getpullrequests", (req, res) => {
 				for (const [pullrequest_key, pullrequest_value] of Object.entries(
 					data[user_key][repo_key]
 				)) {
-					var newData = data[user_key][repo_key][pullrequest_key]
-					newData['key'] = pullrequest_key
+					var newData = data[user_key][repo_key][pullrequest_key];
+					newData["key"] = pullrequest_key;
 					pullrequests.push(newData);
 				}
 			}
 		}
-		console.log(pullrequests);
+		//console.log(pullrequests);
 		res.json(pullrequests);
 	});
 });
@@ -255,7 +255,7 @@ function getPullrequest(contestid, repositoryPath, pullrequestid) {
 		);
 		ref.once("value", function (snapshot) {
 			var data = snapshot.val();
-			console.log(data);
+			//console.log(data);
 			resolve(data);
 		});
 	});
@@ -267,7 +267,7 @@ function getContest(contestid) {
 		var ref = db.ref("/contest/" + contestid);
 		ref.once("value", function (snapshot) {
 			var data = snapshot.val();
-			console.log(data);
+			//console.log(data);
 			resolve(data);
 		});
 	});
@@ -288,8 +288,8 @@ function getTaskPullRequests(contestid, repository) {
 
 				for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
 					if (data[pullrequest_key]["enabled"] == true) {
-						var newData = data[pullrequest_key]
-						newData['key'] = pullrequest_key;
+						var newData = data[pullrequest_key];
+						newData["key"] = pullrequest_key;
 						pullrequests.push(newData);
 					}
 				}
@@ -366,38 +366,65 @@ app.post("/sendvotes", (req, res) => {
 	var votes = req.body.votes;
 	var githubData;
 	var username;
-
 	var idToken = req.body.idToken;
-	getGithubData(idToken)
-		.then((data) => {
-			githubData = data;
-		})
-		.then(() => getUsername(githubData))
-		.then((result) => {
-			username = result;
-			if (isAllowToVote(githubData)) {
-				userHaveCredits(username, votes).then((haveCredits) => {
-					if (haveCredits) {
-						vote(username, contestid, repositoryid, pullrequestid, votes);
-					}
-				});
-			}
-		});
+	var oldVotes = 0;
+	if (votes > 0) {
+		getGithubData(idToken)
+			.then((data) => {
+				githubData = data;
+			})
+			.then(() => getUsername(githubData))
+			.then((result) => {
+				username = result;
+				if (isAllowedToVote(githubData, contestid)) {
+					getUserOlderVotes(username, contestid, repositoryid, pullrequestid).then(
+						(result) => {
+							oldVotes = result;
+							userHaveCredits(username, votes, oldVotes, contestid).then((haveCredits) => {
+								if (haveCredits) {
+									vote(username, contestid, repositoryid, pullrequestid, votes, oldVotes);
+									res.json({ status: "vote registered" });
+								}
+							});
+						}
+					);
+				} else {
+					res.json({ error: "User created after event starting date" });
+				}
+			});
+	} else {
+		res.json({ status: "invalid votes amount" });
+	}
 });
 
+function isAllowedToVote(githubData, contestid) {
+	getContest(contestid).then((result) => {
+		if (isCreatedBeforeDate(githubData, result.startDate)) {
+			return true;
+		} else {
+			return false;
+		}
+	});
 
-function isAllowToVote(githubData) {
 	return true;
 }
-function userHaveCredits(username, votes) {
+function userHaveCredits(username, votes, oldVotes, contestid) {
 	return new Promise((resolve, reject) => {
-		resolve(true);
+		getUserCredits(username, contestid).then((userCredits) => {
+			resolve(userCredits >= ((votes + oldVotes) ** 2) - (oldVotes**2));
+		});
 	});
 }
 
-
-function vote(username, contestid, repositoryid, pullrequestid, votes) {
-	console.log(votes)
+function vote(
+	username,
+	contestid,
+	repositoryid,
+	pullrequestid,
+	votes,
+	oldVotes
+) {
+	//console.log(votes);
 	var ref = db.ref(
 		"/votes" +
 			"/" +
@@ -412,6 +439,7 @@ function vote(username, contestid, repositoryid, pullrequestid, votes) {
 	votersRef.set({
 		username: username,
 		votes: votes,
+		timestamp: Date.now(),
 	});
 
 	var voteRef = db.ref(
@@ -425,6 +453,30 @@ function vote(username, contestid, repositoryid, pullrequestid, votes) {
 			"/votes"
 	);
 	voteRef.transaction((current_value) => {
+		return (current_value || 0) + votes;
+	});
+	var userCredits = db.ref(
+		"/users" + "/" + username + "/" + contestid + "/credits"
+	);
+
+	userCredits.transaction((current_value) => {
+		return (current_value || 0) - (((votes+oldVotes) ** 2) - (oldVotes**2));
+	});
+
+	var userPullrequestVotes = db.ref(
+		"/users" +
+			"/" +
+			username +
+			"/" +
+			contestid +
+			"/prs/" +
+			repositoryid +
+			"/" +
+			pullrequestid +
+			"/votes"
+	);
+
+	userPullrequestVotes.transaction((current_value) => {
 		return (current_value || 0) + votes;
 	});
 
@@ -461,14 +513,12 @@ app.post("/getpullrequestsvotes", (req, res) => {
 function getAllPullrequestVotes(contestid, repositoryid) {
 	var votes = {};
 	return new Promise((resolve, reject) => {
-		var ref = db.ref(
-			"/votes/" + contestid + "/" + repositoryid
-		);
+		var ref = db.ref("/votes/" + contestid + "/" + repositoryid);
 		ref.once("value", function (snapshot) {
 			if (snapshot.exists()) {
 				var data = snapshot.val();
 				for (const [pullrequest_key, pullrequest_value] of Object.entries(data)) {
-					votes[pullrequest_key] = data[pullrequest_key].votes
+					votes[pullrequest_key] = data[pullrequest_key].votes;
 				}
 			}
 
@@ -477,5 +527,98 @@ function getAllPullrequestVotes(contestid, repositoryid) {
 	});
 }
 
+app.post("/getusercredits", (req, res) => {
+	var idToken = req.body.idToken;
+	var contestid = req.body.contestid;
+	var repositoryid = req.body.repositoryid;
+	var pullrequestid = req.body.pullrequestid;
+	var username;
+	var data = {};
+	getGithubData(idToken)
+		.then((data) => getUsername(data))
+		.then((result) => {
+			username = result;
+		})
+		.then(() => getUserCredits(username, contestid))
+		.then((result) => {
+			data["credits"] = result;
+		})
+		.then(() =>
+			getUserOlderVotes(username, contestid, repositoryid, pullrequestid)
+		)
+		.then((result) => {
+			data["oldVotes"] = result;
+			res.json(data);
+		});
+});
+
+function getUserCredits(username, contestid) {
+	return new Promise((resolve, reject) => {
+		var credits = 0;
+		var ref = db.ref("/users/" + username + "/" + contestid + "/" + "credits");
+		ref.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				credits = snapshot.val();
+				resolve(credits);
+			} else {
+				redeemUserCredits(username, contestid).then((result) => {
+					credits = result;
+					resolve(credits);
+				});
+			}
+		});
+	});
+}
+
+function redeemUserCredits(username, contestid) {
+	return new Promise((resolve, reject) => {
+		var credits = 0;
+		var contestsRef = db.ref("/contest/" + contestid + "/" + "credits");
+		contestsRef.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				credits = snapshot.val();
+				setUserCredits(username, contestid, credits).then((result) =>
+					resolve(result)
+				);
+			} else {
+				("contest credits not found");
+			}
+		});
+	});
+}
+
+function setUserCredits(username, contestid, credits) {
+	return new Promise((resolve, reject) => {
+		var ref = db.ref("/users/" + username + "/" + contestid);
+		ref.set({ credits: credits });
+		resolve(credits);
+	});
+}
+
+function getUserOlderVotes(username, contestid, repositoryid, pullrequestid) {
+	return new Promise((resolve, reject) => {
+		console.log(username, contestid, repositoryid, pullrequestid);
+		var oldVotes = 0;
+		var userPullrequestVotes = db.ref(
+			"/users" +
+				"/" +
+				username +
+				"/" +
+				contestid +
+				"/prs/" +
+				repositoryid +
+				"/" +
+				pullrequestid +
+				"/votes"
+		);
+		userPullrequestVotes.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				oldVotes = snapshot.val();
+			}
+			console.log(oldVotes);
+			resolve(oldVotes);
+		});
+	});
+}
 
 exports.app = functions.https.onRequest(app);

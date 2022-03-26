@@ -38,6 +38,7 @@ export function VoteOptions(props) {
 				setVote={props.setVote}
 				credits={props.credits}
 				setCurrentCredits={props.setCurrentCredits}
+				oldVotes={props.oldVotes}
 			/>
 		</div>
 	);

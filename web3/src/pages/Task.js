@@ -20,6 +20,7 @@ var formatter = new Intl.NumberFormat("en-US", {
 function Task() {
 	const [username, setUsername] = useState("");
 	const params = useParams();
+	
 	const [search, setSearch] = useState();
 	const [votesList, setVotesList] = useState({});
 	const [tasks, setTasks] = useState({

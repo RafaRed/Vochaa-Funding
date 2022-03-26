@@ -8,13 +8,20 @@ import { ConfirmVoteButton } from "../components/Proposals/ConfirmVoteButton";
 import { VoteOptions } from "../components/Proposals/VoteOptions";
 import { VoteStatusBar } from "../components/Proposals/VoteStatusBar";
 import { LoadVotes } from "../components/Proposals/LoadVotes";
-import { getPullrequest, getVotes, sendVotes } from "../model/Calls/Database";
+import { getCredits, getPullrequest, getVotes, sendVotes } from "../model/Calls/Database";
 import ReactMarkdown from "react-markdown";
+import { auth, provider } from "../model/firebaseConnect";
+import {
+	GithubAuthProvider,
+	signInWithPopup,
+	onAuthStateChanged,
+	signOut,
+} from "firebase/auth";
 
 function Proposal(props) {
 	const [project, setProject] = useState({ name: "#1 - Pull Request Title", symbol: "", address: "" });
-	const [credits, setCredits] = useState(100);
-	const [currentCredits, setCurrentCredits] = useState(100);
+	const [credits, setCredits] = useState(0);
+	const [currentCredits, setCurrentCredits] = useState(0);
 	const [vote, setVote] = useState(0);
 	const [votes, setVotes] = useState(0)
 	const [currentVotes, setCurrentVotes] = useState([]);
@@ -23,13 +30,23 @@ function Proposal(props) {
 		description: "",
 		credits: "0",
 	});
+	const [oldVotes, setOldVotes] = useState(0);
 	const [task,setTask] = useState({});
 	const [username, setUsername] = useState("");
 	const params = useParams();
 	useEffect(()=>{
 		fetchTask(params,setTask)
 		fetchVotes(params,setVotes)
+		
+		
 	},[])
+
+	useEffect(()=>{
+		onAuthStateChanged(auth, (currentUser) => {
+			fetchCredits(params,setCredits,setCurrentCredits,setOldVotes,setVote)
+		})
+	},[])
+
 
 	/*LoadVotes(
 		params,
@@ -84,6 +101,7 @@ function Proposal(props) {
 							vote={vote}
 							credits={credits}
 							setCurrentCredits={setCurrentCredits}
+							oldVotes={oldVotes}
 						/>
 
 						<ConfirmVoteButton
@@ -148,6 +166,16 @@ function fetchTask(params, setTask){
 function fetchVotes(params, setVotes){
 	getVotes(params.contest,params.task,params.proposal)
 	.then(data => setVotes(data))
+}
+function fetchCredits(params, setCredits, setCurrentCredits,setOldVotes,setVote){
+
+	getCredits(params.contest,params.task,params.proposal)
+	.then(data => {
+
+		setCredits(data.credits)
+		setCurrentCredits(data.credits)
+		setOldVotes(data.oldVotes)
+	})
 }
 function getStatus(now, votes) {
 	// 0 = waiting | 1 = running | 2 = ended

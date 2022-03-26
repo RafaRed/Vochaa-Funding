@@ -13,7 +13,7 @@ export function VoteButton(props) {
 			</div>
 			<div className="quantity">
 				{props.vote !== undefined
-					? props.vote
+					? props.vote+props.oldVotes
 					: 0}
 			</div>
 			<div
