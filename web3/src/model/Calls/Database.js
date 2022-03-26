@@ -9,7 +9,8 @@ import {
 	getvotes_path,
 	sendvotes_path,
 	getpullrequestvotes_path,
-    getcredits_path
+    getcredits_path,
+	getwhitelisted_path
 } from "../repository";
 import moment from "moment";
 import { getIdToken, getUsername } from "./Auth";
@@ -183,6 +184,21 @@ export async function getCredits(contestid,repositoryid,pullrequestid) {
 	};
 	return new Promise((resolve, reject) => {
 		fetch(server + getcredits_path, requestOptions)
+			.then((response) => response.json())
+			.then((data) => resolve(data));
+	});
+}
+
+export async function getWhitelisted() {
+	var idToken = await getIdToken();
+	var data = { idToken: idToken };
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
+	};
+	return new Promise((resolve, reject) => {
+		fetch(server + getwhitelisted_path, requestOptions)
 			.then((response) => response.json())
 			.then((data) => resolve(data));
 	});

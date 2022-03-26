@@ -18,7 +18,8 @@ export function CreateBoard(props) {
 						</div>
 					</Link>
 					<a href={"/contest/" + key} key={key+"_"}>
-					<button className={[props.classes.app, "edit-button"].join(" ")}>EDIT</button>
+					
+					{props.whitelisted ? <button className={[props.classes.app, "edit-button"].join(" ")}>EDIT</button> : ""}
 					</a>
 					
 					</div>

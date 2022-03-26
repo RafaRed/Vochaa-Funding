@@ -63,6 +63,8 @@ module.exports.isCreatedBeforeDate = function (githubData, oldTimestamp) {
 	return oldTimestamp > newTimestamp;
 };
 
-module.exports.getUsername = function (githubData) {
-	return githubData["login"];
+module.exports.getUsername = async function (githubData) {
+	return new Promise((resolve,reject)=>{
+		resolve(githubData["login"]);
+	})
 };

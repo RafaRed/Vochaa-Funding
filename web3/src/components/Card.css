@@ -30,6 +30,21 @@ img
     box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
     
 }
+.card .buttonDisabled{
+
+    
+    margin-top: 50px;
+    width: 294px;
+    height: 77px;
+    border-radius: 10px;
+    border:none;
+    background-color: #c1c1c1;
+    color: #919191;
+    font-size: 24px;
+    font-weight: 700;
+    box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
+    
+}
 .card .info{
     display: flex;
     flex-direction: column;

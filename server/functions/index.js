@@ -380,12 +380,21 @@ app.post("/sendvotes", (req, res) => {
 					getUserOlderVotes(username, contestid, repositoryid, pullrequestid).then(
 						(result) => {
 							oldVotes = result;
-							userHaveCredits(username, votes, oldVotes, contestid).then((haveCredits) => {
-								if (haveCredits) {
-									vote(username, contestid, repositoryid, pullrequestid, votes, oldVotes);
-									res.json({ status: "vote registered" });
+							userHaveCredits(username, votes, oldVotes, contestid).then(
+								(haveCredits) => {
+									if (haveCredits) {
+										vote(
+											username,
+											contestid,
+											repositoryid,
+											pullrequestid,
+											votes,
+											oldVotes
+										);
+										res.json({ status: "vote registered" });
+									}
 								}
-							});
+							);
 						}
 					);
 				} else {
@@ -411,7 +420,7 @@ function isAllowedToVote(githubData, contestid) {
 function userHaveCredits(username, votes, oldVotes, contestid) {
 	return new Promise((resolve, reject) => {
 		getUserCredits(username, contestid).then((userCredits) => {
-			resolve(userCredits >= ((votes + oldVotes) ** 2) - (oldVotes**2));
+			resolve(userCredits >= (votes + oldVotes) ** 2 - oldVotes ** 2);
 		});
 	});
 }
@@ -460,7 +469,7 @@ function vote(
 	);
 
 	userCredits.transaction((current_value) => {
-		return (current_value || 0) - (((votes+oldVotes) ** 2) - (oldVotes**2));
+		return (current_value || 0) - ((votes + oldVotes) ** 2 - oldVotes ** 2);
 	});
 
 	var userPullrequestVotes = db.ref(
@@ -620,5 +629,24 @@ function getUserOlderVotes(username, contestid, repositoryid, pullrequestid) {
 		});
 	});
 }
+
+app.post("/getwhitelisted", (req, res) => {
+	var idToken = req.body.idToken;
+	console.log(idToken);
+	var username;
+	if (idToken === null || idToken === undefined) {
+		resolve(false);
+	}
+	getGithubData(idToken)
+		.then((data) => getUsername(data))
+		.then(result => {
+			username = result;
+		})
+		.then(() =>
+			isWhitelisted(username).then((result) => {
+				res.json({ result: result[1] });
+			})
+		);
+});
 
 exports.app = functions.https.onRequest(app);

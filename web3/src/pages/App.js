@@ -1,10 +1,26 @@
 import "../css/App.css";
 import Navbar from "../components/Navbar";
 import Card from "../components/Card";
-import {useState} from "react"
+import {useEffect, useState} from "react"
+import { getWhitelisted } from "../model/Calls/Database";
+import { auth, provider } from "../model/firebaseConnect";
+import {
+	onAuthStateChanged,
+} from "firebase/auth";
 
 function App() {
 	const [username, setUsername] = useState("");
+	const [whitelisted, setWhitelisted] = useState(false)
+	useEffect(()=>{
+		onAuthStateChanged(auth, (currentUser) => {
+		getWhitelisted()
+		.then(result => 
+			{
+				setWhitelisted(result.result)
+			})
+		})
+		
+	},[])
 	return (
 		<div className="App">
 			<Navbar menu="home" username={username} setUsername={setUsername}/>
@@ -23,6 +39,8 @@ function App() {
 						desc="Set up a Quadratic Voting Contest."
 						button="CREATE"
 						link="create-contest"
+						whitelisted={whitelisted}
+						checkwhitelisted={true}
 					/>
 				</div>
 				<div className="card2">
@@ -32,6 +50,7 @@ function App() {
 						desc="Discover the contests, join and help voting."
 						button="EXPLORE"
 						link="/explore"
+						checkwhitelisted={false}
 					/>
 				</div>
 			</div>

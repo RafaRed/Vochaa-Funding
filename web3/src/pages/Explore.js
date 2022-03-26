@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../css/Explore.css";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
@@ -7,13 +7,30 @@ import { SearchBar } from "../components/Explore/SearchBar";
 import { CreateBoard } from "../components/Explore/CreateBoard";
 import { AddContest } from "../components/Explore/AddProject";
 import { GetProjects } from "../components/Explore/GetProjects";
-
+import { auth, provider } from "../model/firebaseConnect";
+import {
+	GithubAuthProvider,
+	signInWithPopup,
+	onAuthStateChanged,
+	signOut,
+} from "firebase/auth";
+import { getWhitelisted } from "../model/Calls/Database";
 
 
 function Explore(props) {
 	const [projects, setProjects] = useState();
 	const [search, setSearch] = useState();
 	const [username, setUsername] = useState("");
+	const [whitelisted, setWhitelisted] = useState(false)
+	useEffect(()=>{
+		onAuthStateChanged(auth, (currentUser) => {
+		getWhitelisted()
+		.then(result => 
+			{
+				setWhitelisted(result.result)
+			})
+		})
+	});
 
 	GetProjects(setProjects);
 
@@ -33,6 +50,7 @@ function Explore(props) {
 							projects={projects}
 							classes={props.classes}
 							search={search}
+							whitelisted={whitelisted}
 						/>
 					</div>
 				</div>
