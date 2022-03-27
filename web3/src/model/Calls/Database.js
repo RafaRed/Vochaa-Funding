@@ -10,7 +10,8 @@ import {
 	sendvotes_path,
 	getpullrequestvotes_path,
     getcredits_path,
-	getwhitelisted_path
+	getwhitelisted_path,
+	getprojects_path
 } from "../repository";
 import moment from "moment";
 import { getIdToken, getUsername } from "./Auth";
@@ -199,6 +200,19 @@ export async function getWhitelisted() {
 	};
 	return new Promise((resolve, reject) => {
 		fetch(server + getwhitelisted_path, requestOptions)
+			.then((response) => response.json())
+			.then((data) => resolve(data));
+	});
+}
+
+export async function getProjects() {
+
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+	};
+	return new Promise((resolve, reject) => {
+		fetch(server + getprojects_path, requestOptions)
 			.then((response) => response.json())
 			.then((data) => resolve(data));
 	});

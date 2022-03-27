@@ -1,18 +1,13 @@
 import { useEffect } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
+import { getProjects } from "../../model/Calls/Database";
 
 export function GetProjects(setProjects) {
 	useEffect(() => {
-		const db = getDatabase();
-		const starCountRef = ref(db, "contest/");
-		onValue(starCountRef, (snapshot) => {
-			const data = snapshot.val();
-			const projectList = {};
-			for (let project in data) {
-
-				projectList[project] = data[project];
-			}
+		getProjects()
+		.then(projectList =>{
 			setProjects(projectList);
-		});
+		})
+		
 	}, []);
 }

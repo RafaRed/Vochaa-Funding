@@ -639,7 +639,7 @@ app.post("/getwhitelisted", (req, res) => {
 	}
 	getGithubData(idToken)
 		.then((data) => getUsername(data))
-		.then(result => {
+		.then((result) => {
 			username = result;
 		})
 		.then(() =>
@@ -647,6 +647,21 @@ app.post("/getwhitelisted", (req, res) => {
 				res.json({ result: result[1] });
 			})
 		);
+});
+
+app.post("/getprojects", (req, res) => {
+
+	var ref = db.ref("/contest/");
+	ref.once("value", function (snapshot) {
+		const projectList = {};
+		const data = snapshot.val();
+		if (snapshot.exists()) {
+			for (let project in data) {
+				projectList[project] = data[project];
+			}
+		}
+		res.json(projectList)
+	});
 });
 
 exports.app = functions.https.onRequest(app);
