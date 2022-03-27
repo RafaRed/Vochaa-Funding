@@ -5,7 +5,11 @@ import "../css/SetupContest.css";
 import injectSheet from "react-jss";
 import Papa from "papaparse";
 import ReactMarkdown from "react-markdown";
-import { updatePullRequests, getPullRequests, getContest } from "../model/Calls/Database";
+import {
+	updatePullRequests,
+	getPullRequests,
+	getContest,
+} from "../model/Calls/Database";
 import moment from "moment";
 
 function SetupContest() {
@@ -15,23 +19,22 @@ function SetupContest() {
 	const selectFile = () => {
 		fileInput.current.click();
 	};
-	const [contest,setContest] = useState({})
+	const [contest, setContest] = useState({});
 	const [pullrequests, setPullrequests] = useState([]);
 	const params = useParams();
-	useEffect(()=>{
-		FetchPullRequests(params.contest,setPullrequests)
-		FetchContest(params.contest,setContest)
-	},[])
+	useEffect(() => {
+		FetchPullRequests(params.contest, setPullrequests);
+		FetchContest(params.contest, setContest);
+	}, []);
 
 	var formatter = new Intl.NumberFormat("en-US", {
 		style: "currency",
 		currency: "USD",
-	
+
 		// These options are needed to round to whole numbers if that's what you want.
 		//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
 		//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 	});
-	
 
 	return (
 		<>
@@ -46,18 +49,20 @@ function SetupContest() {
 								</div>
 								<div className="labels">
 									<h2 className="block-title">{contest.name}</h2>
-									<p>from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to {moment.unix(contest.endDate).format("MM/DD/YYYY")}</p>
+									<p>
+										from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to{" "}
+										{moment.unix(contest.endDate).format("MM/DD/YYYY")}
+									</p>
 									<p>{contest.credits} credits per user</p>
 									<p>
-										funding pool <span className="green">{formatter.format(contest.funding)}</span>
+										funding pool{" "}
+										<span className="green">{formatter.format(contest.funding)}</span>
 									</p>
 								</div>
 							</div>
 							<button className="edit">EDIT</button>
 						</div>
-						<div className="content conteiner">
-							{contest.description}
-						</div>
+						<div className="content conteiner">{contest.description}</div>
 					</div>
 
 					<div className="block">
@@ -66,18 +71,24 @@ function SetupContest() {
 							<div className="buttons">
 								<input
 									ref={fileInput}
-									onChange={(e) => upload(e, setArray, array, params, setPullrequests, pullrequests)}
+									onChange={(e) =>
+										upload(e, setArray, array, params, setPullrequests, pullrequests)
+									}
 									type="file"
 									style={{ display: "none" }}
 								/>
 								<button onClick={selectFile} className="import">
 									IMPORT CSV
 								</button>
-								<button className="save" onClick={()=>updatePullRequests(params.contest,pullrequests)}>SAVE</button>
+								<button
+									className="save"
+									onClick={() => updatePullRequests(params.contest, pullrequests)}>
+									SAVE
+								</button>
 							</div>
 						</div>
 						<div className="divider"></div>
-						<PullRequests pullrequests={pullrequests}></PullRequests>
+						<PullRequests pullrequests={pullrequests} setPullrequests={setPullrequests}></PullRequests>
 					</div>
 				</div>
 			</div>
@@ -85,13 +96,11 @@ function SetupContest() {
 	);
 }
 
-function FetchContest(contestid,setContest){
-	getContest(contestid)
-	.then(data=>setContest(data))
+function FetchContest(contestid, setContest) {
+	getContest(contestid).then((data) => setContest(data));
 }
-function FetchPullRequests(contestid,setPullrequests){
-	getPullRequests(contestid)
-	.then(data => setPullrequests(data))
+function FetchPullRequests(contestid, setPullrequests) {
+	getPullRequests(contestid).then((data) => setPullrequests(data));
 }
 
 function upload(e, setArray, array, params, setPullrequests, pullrequests) {
@@ -100,22 +109,29 @@ function upload(e, setArray, array, params, setPullrequests, pullrequests) {
 	if (file) {
 		fileReader.onload = function (event) {
 			const csvOutput = event.target.result;
-			loadCsv(csvOutput, setArray, array, params, setPullrequests,pullrequests);
+			loadCsv(csvOutput, setArray, array, params, setPullrequests, pullrequests);
 		};
 
 		fileReader.readAsText(file);
 	}
 }
 
-function loadCsv(string, setArray, array, params, setPullrequests,pullrequests) {
-	var newarray = Papa.parse(string, { header: true }).data
+function loadCsv(
+	string,
+	setArray,
+	array,
+	params,
+	setPullrequests,
+	pullrequests
+) {
+	var newarray = Papa.parse(string, { header: true }).data;
 	setArray(newarray);
 
-	var newPullRequests = []
+	var newPullRequests = [];
 	if (newarray !== undefined) {
 		var prs = newarray;
 		for (var i = 0; i < prs.length; i++) {
-			if(prs[i]["#"] !== undefined){
+			if (prs[i]["#"] !== undefined) {
 				var newData = {
 					pr: prs[i]["#"],
 					title: prs[i].Title,
@@ -125,45 +141,51 @@ function loadCsv(string, setArray, array, params, setPullrequests,pullrequests) 
 					repository: prs[i].Repository,
 					contestid: params.contest,
 					created: prs[i].Created,
-					enabled: true
+					enabled: false,
 				};
-				newPullRequests.push(newData)
+				newPullRequests.push(newData);
 			}
 		}
 		//setPullrequests(pullrequests => ([...pullrequests, ...newPullRequests])) APPEND ARRAYS
-		mergeArrays(pullrequests,newPullRequests,setPullrequests)
+		mergeArrays(pullrequests, newPullRequests, setPullrequests);
 	}
 }
 
-function mergeArrays(pullrequests,newPullRequests,setPullrequests){
+function mergeArrays(pullrequests, newPullRequests, setPullrequests) {
 	var newArray = newPullRequests;
-	for(var i = 0; i < pullrequests.length; i++){
+	for (var i = 0; i < pullrequests.length; i++) {
 		var hasValue = false;
-		for( var j = 0; j < newArray.length; j++){
-			
+		for (var j = 0; j < newArray.length; j++) {
 			//console.log(pullrequests[i].pr === newArray[j].pr)
-			if(pullrequests[i].pr === newArray[j].pr && pullrequests[i].repository === newArray[j].repository) // Check if not contains this value, if so keep the newer.
-			{
+			if (
+				pullrequests[i].pr === newArray[j].pr &&
+				pullrequests[i].repository === newArray[j].repository
+			) {
+				// Check if not contains this value, if so keep the newer.
 				//console.log(pullrequests[i].pr)
 				hasValue = true;
-				newArray[j]['updated'] = true;
+				newArray[j]["updated"] = true;
 			}
 		}
-		console.log(hasValue)
-		if(hasValue === false){
-			newArray.push(pullrequests[i])
+		console.log(hasValue);
+		if (hasValue === false) {
+			newArray.push(pullrequests[i]);
 		}
 	}
-	setPullrequests(newArray)
+	setPullrequests(newArray);
 }
 
-
-function PullRequests(pullrequests) {
+function PullRequests(pullrequests,setPullrequests) {
 	const pulls = [];
 	if (pullrequests !== undefined && pullrequests.pullrequests !== undefined) {
 		for (var i = 0; i < pullrequests.pullrequests.length; i++) {
 			pulls.push(
-				<PullRequestLayout key={i} pullrequest={pullrequests.pullrequests[i]} i={i}></PullRequestLayout>
+				<PullRequestLayout
+					key={i}
+					pullrequest={pullrequests.pullrequests[i]}
+					i={i}
+					setPullrequests={()=>setPullrequests}
+					pullrequests={pullrequests}></PullRequestLayout>
 			);
 		}
 	}
@@ -171,15 +193,23 @@ function PullRequests(pullrequests) {
 	return pulls;
 }
 
-function PullRequestLayout({ pullrequest, i }) {
-	//console.log(pullrequest)
+function Func3(e,i,setPullrequests,pullrequests){
+	const temp_state = [...pullrequests.pullrequests];
+	temp_state[i].enabled = !temp_state[i].enabled
+	setPullrequests(temp_state)
+  }
+
+function PullRequestLayout({ pullrequest, i, setPullrequests, pullrequests }) {
+
 	return (
 		<div className="pr-line">
 			<input
 				className="pr-checkbox"
 				type="checkbox"
-				id="pull"
-				name="checkbox-pull"></input>
+				id={pullrequest.user+pullrequest.pr}
+				name="checkbox-pull"
+				defaultChecked={pullrequest.enabled}
+				onChange={(e)=>Func3(e,i,setPullrequests,pullrequests)}></input>
 			<div className="pr">
 				<div className="pr-header" onClick={() => toggleClass(i)}>
 					<p className="pr-id">#{pullrequest.pr}</p>
