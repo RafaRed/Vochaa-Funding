@@ -159,3 +159,11 @@
   margin-top: 15px;
   min-width: 15px;
 }
+
+.setup-contest .checkbox-controller{
+  display: flex;
+  text-align: center;
+  line-height: 45px;
+  gap: 10px;
+  
+}

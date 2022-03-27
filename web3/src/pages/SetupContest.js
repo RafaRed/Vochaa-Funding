@@ -23,9 +23,20 @@ function SetupContest() {
 	const [pullrequests, setPullrequests] = useState([]);
 	const params = useParams();
 	useEffect(() => {
-		FetchPullRequests(params.contest, setPullrequests);
+		
 		FetchContest(params.contest, setContest);
 	}, []);
+	useEffect(()=>{
+		console.log("call")
+		FetchPullRequests(params.contest, setPullrequests);
+	},[])
+
+	const setCheckboxState = (id) => {
+		console.log("call funct")
+		const temp_state = [...pullrequests];
+		temp_state[id].enabled = !temp_state[id].enabled;
+		setPullrequests(temp_state);
+	}
 
 	var formatter = new Intl.NumberFormat("en-US", {
 		style: "currency",
@@ -88,7 +99,20 @@ function SetupContest() {
 							</div>
 						</div>
 						<div className="divider"></div>
-						<PullRequests pullrequests={pullrequests} setPullrequests={setPullrequests}></PullRequests>
+						<div className="checkbox-controller"><input
+							className="pr-checkbox"
+							type="checkbox"
+							id="checkall"
+							name="checkbox-pull"
+							defaultChecked={false}
+							onChange={(e)=>{CheckboxController(e,setPullrequests,pullrequests)}}>
+
+							</input>
+							<p>Select All / Deselect All </p></div>
+						
+						<PullRequests
+							pullrequests={pullrequests}
+							setCheckboxState={setCheckboxState}></PullRequests>
 					</div>
 				</div>
 			</div>
@@ -96,6 +120,18 @@ function SetupContest() {
 	);
 }
 
+function CheckboxController(e, setPullrequests, pullrequests){
+	
+	var checked = e.target.checked
+	const temp_state = [...pullrequests];
+	for(var i = 0; i<temp_state.length; i++){
+		temp_state[i].enabled = checked;
+	}
+
+	setPullrequests(temp_state);
+
+}
+	
 function FetchContest(contestid, setContest) {
 	getContest(contestid).then((data) => setContest(data));
 }
@@ -175,16 +211,16 @@ function mergeArrays(pullrequests, newPullRequests, setPullrequests) {
 	setPullrequests(newArray);
 }
 
-function PullRequests(pullrequests,setPullrequests) {
+function PullRequests({pullrequests, setCheckboxState}) {
 	const pulls = [];
-	if (pullrequests !== undefined && pullrequests.pullrequests !== undefined) {
-		for (var i = 0; i < pullrequests.pullrequests.length; i++) {
+	if (pullrequests !== undefined && pullrequests !== undefined) {
+		for (var i = 0; i < pullrequests.length; i++) {
 			pulls.push(
 				<PullRequestLayout
 					key={i}
-					pullrequest={pullrequests.pullrequests[i]}
+					pullrequest={pullrequests[i]}
 					i={i}
-					setPullrequests={()=>setPullrequests}
+					setCheckboxState={setCheckboxState}
 					pullrequests={pullrequests}></PullRequestLayout>
 			);
 		}
@@ -193,43 +229,39 @@ function PullRequests(pullrequests,setPullrequests) {
 	return pulls;
 }
 
-function Func3(e,i,setPullrequests,pullrequests){
-	const temp_state = [...pullrequests.pullrequests];
-	temp_state[i].enabled = !temp_state[i].enabled
-	setPullrequests(temp_state)
-  }
 
-function PullRequestLayout({ pullrequest, i, setPullrequests, pullrequests }) {
+function PullRequestLayout(props) {
 
 	return (
 		<div className="pr-line">
 			<input
 				className="pr-checkbox"
 				type="checkbox"
-				id={pullrequest.user+pullrequest.pr}
+				id={props.pullrequest.user + props.pullrequest.pr}
 				name="checkbox-pull"
-				defaultChecked={pullrequest.enabled}
-				onChange={(e)=>Func3(e,i,setPullrequests,pullrequests)}></input>
+				checked={props.pullrequests[props.i].enabled}
+				onChange={() => props.setCheckboxState(props.i)}
+				></input>
 			<div className="pr">
-				<div className="pr-header" onClick={() => toggleClass(i)}>
-					<p className="pr-id">#{pullrequest.pr}</p>
-					<p className="pr-title">{pullrequest.title}</p>
-					<p className="pr-author"> - {pullrequest.user}</p>
+				<div className="pr-header" onClick={() => toggleClass(props.i)}>
+					<p className="pr-id">#{props.pullrequest.pr}</p>
+					<p className="pr-title">{props.pullrequest.title}</p>
+					<p className="pr-author"> - {props.pullrequest.user}</p>
 				</div>
-				<div id={"id-" + i} className={["pr-content", "hidden"].join(" ")}>
+				<div id={"id-" + props.i} className={["pr-content", "hidden"].join(" ")}>
 					<p className="pr-body">
-						<ReactMarkdown>{pullrequest.body}</ReactMarkdown>
+						<ReactMarkdown>{props.pullrequest.body}</ReactMarkdown>
 					</p>
-					<a className="pr-url" href={pullrequest.url}>
-						{pullrequest.url}
+					<a className="pr-url" href={props.pullrequest.url}>
+						{props.pullrequest.url}
 					</a>
 					<p className="pr-repository">
 						<b>Repo: </b>
-						{pullrequest.repository}
+						{props.pullrequest.repository}
 					</p>
 					<p className="pr-created">
 						<b>Openned at: </b>
-						{pullrequest.created}
+						{props.pullrequest.created}
 					</p>
 				</div>
 			</div>
