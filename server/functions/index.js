@@ -664,4 +664,19 @@ app.post("/getprojects", (req, res) => {
 	});
 });
 
+
+app.post("/getcontest", (req, res) => {
+	var contestid = req.body.contestid;
+	var ref = db.ref("/contest/"+contestid);
+	ref.once("value", function (snapshot) {
+
+		const data = snapshot.val();
+		if (snapshot.exists()) {
+			res.json(data)
+		}
+		
+	});
+});
+
+
 exports.app = functions.https.onRequest(app);

@@ -5,7 +5,8 @@ import "../css/SetupContest.css";
 import injectSheet from "react-jss";
 import Papa from "papaparse";
 import ReactMarkdown from "react-markdown";
-import { updatePullRequests, getPullRequests } from "../model/Calls/Database";
+import { updatePullRequests, getPullRequests, getContest } from "../model/Calls/Database";
+import moment from "moment";
 
 function SetupContest() {
 	const [username, setUsername] = useState("");
@@ -14,11 +15,22 @@ function SetupContest() {
 	const selectFile = () => {
 		fileInput.current.click();
 	};
+	const [contest,setContest] = useState({})
 	const [pullrequests, setPullrequests] = useState([]);
 	const params = useParams();
 	useEffect(()=>{
 		FetchPullRequests(params.contest,setPullrequests)
+		FetchContest(params.contest,setContest)
 	},[])
+
+	var formatter = new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+	
+		// These options are needed to round to whole numbers if that's what you want.
+		//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+		//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+	});
 	
 
 	return (
@@ -29,30 +41,22 @@ function SetupContest() {
 					<div className="block">
 						<div className="header">
 							<div className="data">
-								<div className="logo">
-									<img src="" />
+								<div>
+									<img className="logo" src={contest.logourl} />
 								</div>
 								<div className="labels">
-									<h2 className="block-title">Contest Name</h2>
-									<p>from 03/14/2022 to 03/30/2022</p>
-									<p>100 credits per user</p>
+									<h2 className="block-title">{contest.name}</h2>
+									<p>from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to {moment.unix(contest.endDate).format("MM/DD/YYYY")}</p>
+									<p>{contest.credits} credits per user</p>
 									<p>
-										funding pool <span className="green">$80.000</span>
+										funding pool <span className="green">{formatter.format(contest.funding)}</span>
 									</p>
 								</div>
 							</div>
 							<button className="edit">EDIT</button>
 						</div>
 						<div className="content conteiner">
-							Lorem Ipsum is simply dummy text of the printing and typesetting
-							industry. Lorem Ipsum has been the industry's standard dummy text ever
-							since the 1500s, when an unknown printer took a galley of type and
-							scrambled it to make a type specimen book. It has survived not only five
-							centuries, but also the leap into electronic typesetting, remaining
-							essentially unchanged. Lorem Ipsum is simply dummy text of the printing
-							and typesetting industry. Lorem Ipsum has been the industry's standard
-							dummy text ever since the 1500s, when an unknown printer took a galley of
-							type and scrambled it to make a type specimen book. It has
+							{contest.description}
 						</div>
 					</div>
 
@@ -81,6 +85,10 @@ function SetupContest() {
 	);
 }
 
+function FetchContest(contestid,setContest){
+	getContest(contestid)
+	.then(data=>setContest(data))
+}
 function FetchPullRequests(contestid,setPullrequests){
 	getPullRequests(contestid)
 	.then(data => setPullrequests(data))
