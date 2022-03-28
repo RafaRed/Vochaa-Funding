@@ -13,7 +13,21 @@
 
 .task .task-info {
 	display: flex;
+	flex-direction: row;
 	gap: 30px;
+}
+
+@media only screen and (max-width: 550px) {
+	.task .task-info {
+		flex-direction: column-reverse;
+		flex-wrap: wrap;
+	}
+}
+
+.task .task-url {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .task .block-info {
@@ -22,6 +36,26 @@
 	margin-top: 30px;
 	padding: 30px;
 	width: 70%;
+}
+@media only screen and (max-width: 550px) {
+	.task .block-info {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		text-align: center;
+	}
+}
+
+
+@media only screen and (max-width: 550px) {
+	.task .task-data {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		text-align: center;
+
+	}
 }
 
 .task .block-contest {
@@ -35,6 +69,11 @@
 	justify-content: center;
 	align-items: center;
 	gap: 20px;
+}
+@media only screen and (max-width: 550px) {
+	.task .block-contest {
+		width: 70%;
+	}
 }
 
 .task .board {
@@ -137,8 +176,16 @@
 .task .logo {
 	width: 100px;
 	height: 100px;
-	background-color: #ececec;
 	border-radius: 10px;
+}
+@media only screen and (max-width: 550px) {
+	.task .logo {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+	}
 }
 
 .task .contest-logo {
@@ -150,6 +197,7 @@
 
 .task .block-wrapper {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
 	gap: 20px;
 	margin-bottom: 20px;
@@ -182,3 +230,4 @@
 	line-height: 40px;
 	text-decoration: none;
 }
+

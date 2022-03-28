@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
 import { useParams } from "react-router-dom";
-import "../css/Task.css";
+
 import { getAllPullrequestsVotes, getTask } from "../model/Calls/Database";
 import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import seedrandom from 'seedrandom'
+import "../css/Task.css";
 
 var formatter = new Intl.NumberFormat("en-US", {
 	style: "currency",
@@ -59,7 +60,8 @@ function Task() {
 										{moment.unix(tasks["contest-endDate"]).format("MM/DD/YYYY")}
 									</p>
 									<a className="task-url" href={tasks["url"]}>
-										{tasks["url"]}
+										<p>{tasks["url"]}</p>
+										
 									</a>
 								</div>
 							</div>

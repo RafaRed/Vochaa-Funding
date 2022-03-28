@@ -12,6 +12,12 @@ body {
   display: flex;
   flex-direction: row;
 }
+@media only screen and (max-width: 700px) {
+	.App .header {
+		margin-left: 30px;
+    margin-right: 30px;
+	}
+}
 
 .App .title {
   font-size: 3.5rem;
@@ -38,7 +44,16 @@ body {
 .App .card2 {
   margin-left: 100px;
 }
-
+@media only screen and (max-width: 700px) {
+	.App .card1 {
+		margin-left: 30px;
+    margin-right: 30px;
+	}
+  .App .card2 {
+		margin-left: 30px;
+    margin-right: 30px;
+	}
+}
 
 .App .cards {
   flex-wrap: wrap;

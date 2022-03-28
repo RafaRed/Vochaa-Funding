@@ -20,7 +20,7 @@
   text-align: center;
   padding: 10px 16px;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 1rem;
   
 }
 
@@ -31,7 +31,8 @@
 
 .topnav .metamask {
 margin-right: 10px;
-  width: 200px;
+  width: 30%;
+  max-width: 200px;
   height: 30px;
   color: #ffffff;
 

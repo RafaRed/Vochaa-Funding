@@ -1,38 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import injectSheet from "react-jss";
 import "../css/RepositoriesExplorer.css";
-import { loadTasks } from "../model/Calls/Database";
+import { getContest, loadTasks } from "../model/Calls/Database";
+import ReactMarkdown from "react-markdown";
+
 
 function RepositoriesExplorer(props) {
 	const [username, setUsername] = useState("");
 	const params = useParams();
-	const [taskList,setTaskList] = useState([]);
+	const [taskList, setTaskList] = useState([]);
+	const [contest, setContest] = useState({});
+	const [description, setDescription] = useState();
+	const [readMore,setReadMore]=useState(false);
+	const linkName=readMore?'Read Less << ':'Read More >> '
+	useEffect(() => {
+		FetchContest(params.contest, setContest, setDescription);
+	}, []);
+
 	return (
 		<>
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
 			<div className="repositories">
 				<div className="wrapper">
 					<div className="header">
-						<h1 className="title">Tasks</h1>
-						<p className="description">
-							Search for a project you want to support, voting and sharing your ideas.
+						<h1 className="title">{contest.name}</h1>
+						<p className="block-description">
+							<ReactMarkdown className={readMore ? "readmore" :"readless"}>{description}</ReactMarkdown>
+							<a className="read-more-link" onClick={()=>{setReadMore(!readMore)}}><p className="read-more-text">{linkName}</p></a>
 						</p>
-						<div className="search-bar">
-							<input
-								type="text"
-								id="fname"
-								name="fname"
-								className="block-input"
-								onChange={(val) => props.setSearch(val.target.value)}
-							/>
-							<img src="/images/search.png" />
-						</div>
 					</div>
-
-					<div className="block">
-						<LoadTasks params={params} taskList={taskList} setTaskList={setTaskList}></LoadTasks>
+					
+					<div className="tasks">
+					<h2 className="tasks-title">Tasks</h2>
+						<LoadTasks
+							params={params}
+							taskList={taskList}
+							setTaskList={setTaskList}></LoadTasks>
 					</div>
 				</div>
 			</div>
@@ -40,29 +45,39 @@ function RepositoriesExplorer(props) {
 	);
 }
 
-function LoadTasks({ params, taskList, setTaskList}) {
+function FetchContest(contestid, setContest, setDescription) {
+	getContest(contestid).then((data) => {
+		setContest(data);
+		formatDescription(data.description, setDescription)
+	});
+}
 
-		useEffect(()=>{
-			var newTaskList = []
-			loadTasks(params.contest).then((tasks) => {
-				for (const [key, value] of Object.entries(tasks)) {
-					newTaskList.push(Task(tasks[key],key,params.contest));
-				}
-				setTaskList(newTaskList)
-	
-			});
-		},[])
-		
+function formatDescription(description, setDescription){
+	var newDescription = description;
+	newDescription = newDescription.replace("  ", "")
+	setDescription(newDescription)
+}
+function LoadTasks({ params, taskList, setTaskList }) {
+	useEffect(() => {
+		var newTaskList = [];
+		loadTasks(params.contest).then((tasks) => {
+			for (const [key, value] of Object.entries(tasks)) {
+				newTaskList.push(Task(tasks[key], key, params.contest));
+			}
+			setTaskList(newTaskList);
+		});
+	}, []);
 
-
-	
 	return taskList;
 }
 
-function Task(task,key,contestid) {
+function Task(task, key, contestid) {
 	return (
-		<a className="contest-button" key={key} href={"/contest/" + contestid +"/"+ key }>
-			<div className="repo-task">{task['name']}</div>
+		<a
+			className="contest-button"
+			key={key}
+			href={"/contest/" + contestid + "/" + key}>
+			<div className="repo-task">{task["name"]}</div>
 		</a>
 	);
 }

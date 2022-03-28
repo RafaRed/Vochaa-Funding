@@ -27,7 +27,7 @@ app.use(responseTime());
 app.use(
 	rateLimit({
 		windowMs: 1 * 60 * 60 * 1000, // 12 hour duration in milliseconds
-		max: 200,
+		max: 300,
 		message: "You exceeded requests hour limit!",
 		headers: true,
 	})

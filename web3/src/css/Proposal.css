@@ -233,6 +233,11 @@ hr.solid {
     background-color: #fff;
     border-radius: 10px;
 }
+@media only screen and (max-width: 600px) {
+	.proposal .info-block {
+		margin-left: 0px;
+	}
+}
 .proposal .info-header{
     margin-top: 20px;
     display: flex;
