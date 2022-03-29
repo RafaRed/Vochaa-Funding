@@ -213,6 +213,7 @@ app.post("/gettask", (req, res) => {
 			task["contest-startDate"] = result.startDate;
 			task["contest-endDate"] = result.endDate;
 			task["contest-logourl"] = result.logourl;
+			task["contest-currency"] = result.currency;
 			res.json(task);
 		});
 });
@@ -315,13 +316,13 @@ app.post("/getvotes", (req, res) => {
 		.then(() => getContestVotes(contestid))
 		.then((result) => {
 			totalVotes = result.votes;
-
 			res.json({
 				votes: votes,
 				totalVotes: totalVotes,
 				funding: result.funding,
 				startDate: result.startDate,
 				endDate: result.endDate,
+				currency: result.currency
 			});
 		});
 });
@@ -337,6 +338,7 @@ function getContestVotes(contestid) {
 				funding: data.funding,
 				startDate: data.startDate,
 				endDate: data.endDate,
+				currency: data.currency
 			});
 		});
 	});
@@ -516,6 +518,7 @@ app.post("/getpullrequestsvotes", (req, res) => {
 				funding: result.funding,
 				startDate: result.startDate,
 				endDate: result.endDate,
+				currency: result.currency
 			});
 		});
 });

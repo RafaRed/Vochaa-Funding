@@ -60,7 +60,7 @@ function SetupContest() {
 									</p>
 									<p>{contest.credits} credits per user</p>
 									<p>
-										<span className="green">{formatter.format(contest.funding).replace("€","DOGE ")}</span>
+										<span className="green">{formatter.format(contest.funding).replace("€",contest.currency)}</span>
 									</p>
 								</div>
 							</div>

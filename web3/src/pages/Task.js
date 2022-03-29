@@ -9,14 +9,7 @@ import ReactMarkdown from "react-markdown";
 import seedrandom from 'seedrandom'
 import "../css/Task.css";
 
-var formatter = new Intl.NumberFormat("en-US", {
-	style: "currency",
-	currency: "USD",
-
-	// These options are needed to round to whole numbers if that's what you want.
-	//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-	//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-});
+var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
 
 function Task() {
 	const [username, setUsername] = useState("");
@@ -72,7 +65,7 @@ function Task() {
 							<h2 className="contest-name">{tasks["contest-name"]}</h2>
 							<p className="contest-pool">Funding Pool</p>
 							<h2 className="contest-pool-value">
-								{formatter.format(tasks["contest-funding"])}
+								{formatter.format(tasks["contest-funding"]).replace("€",tasks["contest-currency"])}
 							</h2>
 						</div>
 					</div>
@@ -122,7 +115,7 @@ function FetchPullRequests({ params, tasks, search, seed, votesList}) {
 				var valueMatch = 0;
 				if(votes !== 0 ){
 					percentage = Math.round((votes / totalVotes) * 100);
-					valueMatch = formatter.format((funding / totalVotes) * votes)
+					valueMatch = formatter.format((funding / totalVotes) * votes).replace("€",tasks["contest-currency"])
 				}
 				
 				
