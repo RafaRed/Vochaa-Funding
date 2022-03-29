@@ -67,6 +67,12 @@ function CreateProject(props) {
 						handleOnChangeContestData={(e) =>
 							handleOnChangeContestData(e, contest, setContest, "funding")
 						}></BlockFunding>
+						
+						<BlockCurrency
+						buttonStyle={props.classes.buttonStyle}
+						handleOnChangeContestData={(e) =>
+							handleOnChangeContestData(e, contest, setContest, "currency")
+						}></BlockCurrency>
 
 					<BlockAddRepositories
 						buttonStyle={props.classes.buttonStyle}
@@ -195,6 +201,19 @@ function BlockFunding(props) {
 			<p className="block-description">How much is the funding pool?</p>
 			<input
 				type="number"
+				onChange={props.handleOnChangeContestData}
+				className={["block-input", props.buttonStyle].join(" ")}
+			/>
+		</div>
+	);
+}
+function BlockCurrency(props) {
+	return (
+		<div className="block">
+			<h2 className="block-title">Currency Symbol</h2>
+			<p className="block-description">Enter the currency symbol, for US Dollars you can use "USD"</p>
+			<input
+				type="text"
 				onChange={props.handleOnChangeContestData}
 				className={["block-input", props.buttonStyle].join(" ")}
 			/>

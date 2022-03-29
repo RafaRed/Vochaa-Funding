@@ -39,14 +39,7 @@ function SetupContest() {
 		setPullrequests(temp_state);
 	}
 
-	var formatter = new Intl.NumberFormat("en-US", {
-		style: "currency",
-		currency: "USD",
-
-		// These options are needed to round to whole numbers if that's what you want.
-		//minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-		//maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-	});
+	var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
 
 	return (
 		<>
@@ -67,8 +60,7 @@ function SetupContest() {
 									</p>
 									<p>{contest.credits} credits per user</p>
 									<p>
-										funding pool{" "}
-										<span className="green">{formatter.format(contest.funding)}</span>
+										<span className="green">{formatter.format(contest.funding).replace("€","DOGE ")}</span>
 									</p>
 								</div>
 							</div>

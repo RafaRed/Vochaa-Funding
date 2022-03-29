@@ -98,6 +98,7 @@ function registerContest(data, username) {
 		endDate: data.endDate,
 		timestamp: data.timestamp,
 		sender: username,
+		currency: data.currency,
 		votes: 0,
 	});
 

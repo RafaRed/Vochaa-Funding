@@ -31,6 +31,7 @@ export async function createContest(contest, startDate, endDate, repositories) {
 		endDate: endDate.unix(),
 		timestamp: moment().unix(),
 		idToken: idToken,
+		currency: contest.currency,
 		repositories: repositories,
 	};
 
