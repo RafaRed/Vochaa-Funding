@@ -650,7 +650,6 @@ app.post("/getwhitelisted", (req, res) => {
 });
 
 app.post("/getprojects", (req, res) => {
-
 	var ref = db.ref("/contest/");
 	ref.once("value", function (snapshot) {
 		const projectList = {};
@@ -660,23 +659,134 @@ app.post("/getprojects", (req, res) => {
 				projectList[project] = data[project];
 			}
 		}
-		res.json(projectList)
+		res.json(projectList);
 	});
 });
-
 
 app.post("/getcontest", (req, res) => {
 	var contestid = req.body.contestid;
-	var ref = db.ref("/contest/"+contestid);
+	var ref = db.ref("/contest/" + contestid);
 	ref.once("value", function (snapshot) {
-
 		const data = snapshot.val();
 		if (snapshot.exists()) {
-			res.json(data)
+			res.json(data);
 		}
-		
 	});
 });
 
+app.post("/exportcontest", (req, res) => {
+	var contestid = req.body.contestid;
+	var idToken = req.body.idToken;
+	var repositories = {};
+	var contestFunding;
+	var contestVotes;
+	var pullrequests = {};
+	getGithubData(idToken)
+		.then((data) => getUsername(data))
+		.then((username) => isWhitelisted(username))
+		.then((whitelisted) => {
+			if (whitelisted[1] == true) {
+				var ref = db.ref("/contest/" + contestid);
+				ref.once("value", function (snapshot) {
+					const data = snapshot.val();
+					if (snapshot.exists()) {
+						contestFunding = data.funding;
+						contestVotes = data.votes;
+					}
+				});
+				getRepositories(contestid)
+					.then((result) => {
+						repositories = result;
+					})
+					.then(() => getPullRequests(contestid,repositories))
+					.then((result) => {
+						pullrequests = result;
+					})
+					.then(() => getVotes(contestid, pullrequests,repositories))
+					.then((result) => {
+						pullrequests = result;
+						res.json({
+							contestFunding: contestFunding,
+							contestVotes: contestVotes,
+							pullrequests: pullrequests,
+						});
+					});
+			}
+			else{
+				res.json({"response":"User not allowed to perform this operation"})
+			}
+		});
+});
+
+function getRepositories(contestid) {
+	return new Promise((resolve, reject) => {
+		var refRepo = db.ref("/repository/" + contestid);
+		refRepo.once("value", function (snapshot) {
+			//whitelist check
+			const data = snapshot.val();
+			if (snapshot.exists()) {
+				resolve(data);
+			}
+		});
+	});
+}
+
+function getPullRequests(contestid,repositories) {
+	return new Promise((resolve, reject) => {
+		var refPullrequests = db.ref("/pullrequests/" + contestid);
+		refPullrequests.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				var pullrequests = {};
+				var data = snapshot.val();
+				for (const [user_key, user_value] of Object.entries(data)) {
+					for (const [repo_key, repo_value] of Object.entries(data[user_key])) {
+						var repositoryid = getRepositoryId(user_key,repo_key,repositories)
+						pullrequests[repositoryid] = {}
+						for (const [pullrequest_key, pullrequest_value] of Object.entries(
+							data[user_key][repo_key]
+						)) {
+							
+
+							pullrequests[repositoryid][pullrequest_key] = data[user_key][repo_key][pullrequest_key];
+						}
+					}
+				}
+				resolve(pullrequests);
+			}
+		});
+	});
+}
+
+function getRepositoryId(user,repo,repositories){
+	for (const [repo_key, repo_value] of Object.entries(repositories)) {
+		repositoryPath = repositories[repo_key].url.split("/");
+		if(repositoryPath[repositoryPath.length - 2] === user && repositoryPath[repositoryPath.length - 1] === repo){
+			console.log(repo_key)
+			return repo_key;
+		}
+	}
+	
+}
+
+function getVotes(contestid, pullrequests) {
+	return new Promise((resolve, reject) => {
+		var refVotes = db.ref("/votes/" + contestid);
+		refVotes.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				var data = snapshot.val();
+				
+
+				for (const [repo_key, repo_value] of Object.entries(data)) {
+					
+					for (const [pullrequest_key, pullrequest_value] of Object.entries(data[repo_key])) {
+						pullrequests[repo_key][pullrequest_key]["votes"] = data[repo_key][pullrequest_key]["votes"];
+					}
+				}
+				
+				resolve(pullrequests);
+			}
+		});
+	});
+}
 
 exports.app = functions.https.onRequest(app);

@@ -9,6 +9,7 @@ import {
 	updatePullRequests,
 	getPullRequests,
 	getContest,
+	getExportData,
 } from "../model/Calls/Database";
 import moment from "moment";
 
@@ -72,6 +73,7 @@ function SetupContest() {
 								</div>
 							</div>
 							<button className="edit">EDIT</button>
+							<button className="edit" onClick={()=>exportData(params.contest)}>Export</button>
 						</div>
 						<div className="content conteiner">{contest.description}</div>
 					</div>
@@ -119,7 +121,10 @@ function SetupContest() {
 		</>
 	);
 }
-
+function exportData(contestid){
+	getExportData(contestid)
+	.then(result => console.log(result))
+}
 function CheckboxController(e, setPullrequests, pullrequests){
 	
 	var checked = e.target.checked

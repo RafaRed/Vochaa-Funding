@@ -12,7 +12,8 @@ import {
     getcredits_path,
 	getwhitelisted_path,
 	getprojects_path,
-	getcontest_path
+	getcontest_path,
+	exportcontest_path
 } from "../repository";
 import moment from "moment";
 import { getIdToken, getUsername } from "./Auth";
@@ -228,6 +229,22 @@ export async function getContest(contestid) {
 	};
 	return new Promise((resolve, reject) => {
 		fetch(server + getcontest_path, requestOptions)
+			.then((response) => response.json())
+			.then((data) => resolve(data));
+	});
+}
+
+export async function getExportData(contestid) {
+	var idToken = await getIdToken();
+	
+	var data = { idToken: idToken, contestid: contestid };
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
+	};
+	return new Promise((resolve, reject) => {
+		fetch(server + exportcontest_path, requestOptions)
 			.then((response) => response.json())
 			.then((data) => resolve(data));
 	});
