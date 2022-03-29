@@ -143,10 +143,11 @@ function BlockDescription(props) {
 		<div className="block">
 			<h2 className="block-title">Description</h2>
 			<p className="block-description">Enter the contest description and rules</p>
-			<input
+			<textarea
+			cols="40" rows="5"
 				type="text"
 				onChange={props.handleOnChangeContestData}
-				className={["block-input", props.buttonStyle].join(" ")}
+				className={["block-area-input", props.buttonStyle].join(" ")}
 			/>
 		</div>
 	);

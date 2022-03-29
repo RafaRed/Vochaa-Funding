@@ -75,7 +75,8 @@ function SetupContest() {
 							<button className="edit">EDIT</button>
 							<button className="edit" onClick={()=>exportData(params.contest)}>Export</button>
 						</div>
-						<div className="content conteiner">{contest.description}</div>
+						<div className="content conteiner">
+							<ReactMarkdown>{contest.description}</ReactMarkdown></div>
 					</div>
 
 					<div className="block">

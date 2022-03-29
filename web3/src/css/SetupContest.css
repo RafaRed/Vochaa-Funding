@@ -57,12 +57,14 @@
 }
 .setup-contest .block-description {
 	margin-bottom: 10px;
+
 }
 
 .setup-contest .conteiner {
   padding: 20px;
 	background-color: #dfdfdf;
 	border-radius: 10px;
+  white-space: pre-line;
 }
 
 .setup-contest .pull-header{
