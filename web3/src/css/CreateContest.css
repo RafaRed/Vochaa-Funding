@@ -144,6 +144,7 @@
   font-size: 24px;
   font-weight: 700;
   box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
+  cursor: pointer;
 }
 .project .add-button-off {
   margin-top: 50px;
@@ -239,6 +240,7 @@
   font-size: 16px;
   font-weight: 700;
   box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.20);
+  cursor: pointer;
 }
 
 .project .input-day{

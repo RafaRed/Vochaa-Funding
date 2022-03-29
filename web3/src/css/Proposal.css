@@ -127,6 +127,7 @@ hr.solid {
 .vote-button {
 	display: flex;
 	gap: 2px;
+
 }
 .vote-button .more {
 	border-top-right-radius: 10px;
@@ -140,6 +141,7 @@ hr.solid {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	cursor: pointer;
 }
 .vote-button .quantity {
 	background-color: #e7e7e7;
@@ -164,6 +166,7 @@ hr.solid {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
+	cursor: pointer;
 }
 
 .proposal .author{
@@ -187,6 +190,7 @@ hr.solid {
     justify-content: center;
 	line-height: 0px;
     text-align: center;
+	cursor: pointer;
 
 
 	-moz-user-select: -moz-none;

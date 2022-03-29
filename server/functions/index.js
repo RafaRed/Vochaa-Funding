@@ -751,8 +751,9 @@ function getPullRequests(contestid,repositories) {
 						}
 					}
 				}
-				resolve(pullrequests);
+				
 			}
+			resolve(pullrequests);
 		});
 	});
 }
@@ -761,7 +762,7 @@ function getRepositoryId(user,repo,repositories){
 	for (const [repo_key, repo_value] of Object.entries(repositories)) {
 		repositoryPath = repositories[repo_key].url.split("/");
 		if(repositoryPath[repositoryPath.length - 2] === user && repositoryPath[repositoryPath.length - 1] === repo){
-			console.log(repo_key)
+			//console.log(repo_key)
 			return repo_key;
 		}
 	}
@@ -769,6 +770,7 @@ function getRepositoryId(user,repo,repositories){
 }
 
 function getVotes(contestid, pullrequests) {
+	console.log("getvotes")
 	return new Promise((resolve, reject) => {
 		var refVotes = db.ref("/votes/" + contestid);
 		refVotes.once("value", function (snapshot) {
@@ -782,7 +784,7 @@ function getVotes(contestid, pullrequests) {
 						pullrequests[repo_key][pullrequest_key]["votes"] = data[repo_key][pullrequest_key]["votes"];
 					}
 				}
-				
+				//console.log(pullrequests)
 				resolve(pullrequests);
 			}
 		});
