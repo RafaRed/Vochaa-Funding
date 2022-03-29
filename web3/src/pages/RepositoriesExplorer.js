@@ -33,7 +33,7 @@ function RepositoriesExplorer(props) {
 					</div>
 					
 					<div className="tasks">
-					<h2 className="tasks-title">Tasks</h2>
+					<h2 className="tasks-title">Repositories</h2>
 						<LoadTasks
 							params={params}
 							taskList={taskList}
