@@ -88,7 +88,7 @@ function SetupContest() {
 								</button>
 								<button
 									className="save"
-									onClick={() => updatePullRequests(params.contest, pullrequests)}>
+									onClick={() => updatePullRequests(params.contest, pullrequests).then(result => window.location.reload(false))}>
 									SAVE
 								</button>
 							</div>

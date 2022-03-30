@@ -133,7 +133,7 @@ app.post("/updatepullrequests", (req, res) => {
 		.then((whitelisted) => {
 			if (whitelisted[1] == true) {
 				updatePullRequests(req.body.repositories);
-				res.json({ result: "Created." });
+				res.json({ result: "Updated." });
 			} else {
 				console.log("User not whitelisted, invalid request.");
 				res.json({ result: "Unable to create contest." });
