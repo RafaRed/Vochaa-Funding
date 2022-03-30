@@ -10,12 +10,14 @@ import {
 	getPullRequests,
 	getContest,
 	getExportData,
+	getUpdateContest,
 } from "../model/Calls/Database";
 import moment from "moment";
 
 function SetupContest() {
 	const [username, setUsername] = useState("");
 	const [array, setArray] = useState();
+	const [edit, setEdit] = useState(false);
 	const fileInput = useRef(null);
 	const selectFile = () => {
 		fileInput.current.click();
@@ -24,52 +26,47 @@ function SetupContest() {
 	const [pullrequests, setPullrequests] = useState([]);
 	const params = useParams();
 	useEffect(() => {
-		
 		FetchContest(params.contest, setContest);
 	}, []);
-	useEffect(()=>{
-		console.log("call")
+	useEffect(() => {
+		console.log("call");
 		FetchPullRequests(params.contest, setPullrequests);
-	},[])
+	}, []);
 
 	const setCheckboxState = (id) => {
-		console.log("call funct")
+		console.log("call funct");
 		const temp_state = [...pullrequests];
 		temp_state[id].enabled = !temp_state[id].enabled;
 		setPullrequests(temp_state);
-	}
+	};
 
-	var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' });
+	var formatter = new Intl.NumberFormat("de-DE", {
+		style: "currency",
+		currency: "EUR",
+	});
+
+	const handleOnChangeContestData = (e, functionValue, setFunction, prop) => {
+		var currentValues = functionValue;
+		currentValues[prop] = e.target.value;
+		setFunction(currentValues);
+	};
 
 	return (
 		<>
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
 			<div className="setup-contest">
 				<div className="wrapper">
-					<div className="block">
-						<div className="header">
-							<div className="data">
-								<div>
-									<img className="logo" src={contest.logourl} />
-								</div>
-								<div className="labels">
-									<h2 className="block-title">{contest.name}</h2>
-									<p>
-										from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to{" "}
-										{moment.unix(contest.endDate).format("MM/DD/YYYY")}
-									</p>
-									<p>{contest.credits} credits per user</p>
-									<p>
-										<span className="green">{formatter.format(contest.funding).replace("€",contest.currency)}</span>
-									</p>
-								</div>
-							</div>
-							<button className="edit">EDIT</button>
-							<button className="edit" onClick={()=>exportData(params.contest)}>Export</button>
-						</div>
-						<div className="content conteiner">
-							<ReactMarkdown>{contest.description}</ReactMarkdown></div>
-					</div>
+					{edit
+						? EdditableData(
+								contest,
+								formatter,
+								setEdit,
+								edit,
+								params,
+								handleOnChangeContestData,
+								setContest
+						  )
+						: StaticData(contest, formatter, setEdit, edit, params)}
 
 					<div className="block">
 						<div className="pull-header">
@@ -88,23 +85,29 @@ function SetupContest() {
 								</button>
 								<button
 									className="save"
-									onClick={() => updatePullRequests(params.contest, pullrequests).then(result => window.location.reload(false))}>
+									onClick={() =>
+										updatePullRequests(params.contest, pullrequests).then((result) =>
+											window.location.reload(false)
+										)
+									}>
 									SAVE
 								</button>
 							</div>
 						</div>
 						<div className="divider"></div>
-						<div className="checkbox-controller"><input
-							className="pr-checkbox"
-							type="checkbox"
-							id="checkall"
-							name="checkbox-pull"
-							defaultChecked={false}
-							onChange={(e)=>{CheckboxController(e,setPullrequests,pullrequests)}}>
+						<div className="checkbox-controller">
+							<input
+								className="pr-checkbox"
+								type="checkbox"
+								id="checkall"
+								name="checkbox-pull"
+								defaultChecked={false}
+								onChange={(e) => {
+									CheckboxController(e, setPullrequests, pullrequests);
+								}}></input>
+							<p>Select All / Deselect All </p>
+						</div>
 
-							</input>
-							<p>Select All / Deselect All </p></div>
-						
 						<PullRequests
 							pullrequests={pullrequests}
 							setCheckboxState={setCheckboxState}></PullRequests>
@@ -114,22 +117,120 @@ function SetupContest() {
 		</>
 	);
 }
-function exportData(contestid){
-	getExportData(contestid)
-	.then(result => console.log(result))
+function StaticData(contest, formatter, setEdit, edit, params) {
+	return (
+		<div className="block">
+			<div className="header">
+				<div className="data">
+					<div>
+						<img className="logo" src={contest.logourl} />
+					</div>
+					<div className="labels">
+						<h2 className="block-title">{contest.name}</h2>
+						<p>
+							from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to{" "}
+							{moment.unix(contest.endDate).format("MM/DD/YYYY")}
+						</p>
+						<p>{contest.credits} credits per user</p>
+						<p>
+							<span className="green">
+								{formatter.format(contest.funding).replace("€", contest.currency)}
+							</span>
+						</p>
+					</div>
+				</div>
+				<div className="buttons">
+					<button className="edit" onClick={() => setEdit(true)}>
+						EDIT
+					</button>
+					<button className="edit" onClick={() => exportData(params.contest)}>
+						Export
+					</button>
+				</div>
+			</div>
+			<div className="content conteiner">
+				<ReactMarkdown>{contest.description}</ReactMarkdown>
+			</div>
+		</div>
+	);
 }
-function CheckboxController(e, setPullrequests, pullrequests){
-	
-	var checked = e.target.checked
+
+function EdditableData(
+	contest,
+	formatter,
+	setEdit,
+	edit,
+	params,
+	handleOnChangeContestData,
+	setContest
+) {
+	return (
+		<div className="block">
+			<div className="header">
+				<div className="data">
+					<div>
+						<img className="logo" src={contest.logourl} />
+					</div>
+					<div className="labels">
+						<h2><input
+							type="text"
+							onChange={(e) => handleOnChangeContestData(e, contest, setContest, "name")}
+							className="block-input"
+							defaultValue={contest.name}
+						/></h2>
+						
+						<p>
+							from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to{" "}
+							{moment.unix(contest.endDate).format("MM/DD/YYYY")}
+						</p>
+						<p>{contest.credits} credits per user</p>
+						<p>
+							<span className="green">
+								{formatter.format(contest.funding).replace("€", contest.currency)}
+							</span>
+						</p>
+					</div>
+				</div>
+				<div className="buttons">
+					<button className="save" onClick={() => updateContest(params.contest,contest.name,contest.description)}>
+						SAVE
+					</button>
+					<button className="edit" onClick={() => exportData(params.contest)}>
+						Export
+					</button>
+				</div>
+			</div>
+		
+			<textarea
+			cols="40" rows="5"
+				type="text"
+				defaultValue={contest.description}
+				onChange={(e) => handleOnChangeContestData(e, contest, setContest, "description")}
+				className={["block-area-input"].join(" ")}
+			/>
+
+		</div>
+	);
+}
+
+function updateContest(contestid,contestName,contestDescription){
+	getUpdateContest(contestid,contestName,contestDescription)
+	.then(()=>window.location.reload(false))
+}
+
+function exportData(contestid) {
+	getExportData(contestid).then((result) => console.log(result));
+}
+function CheckboxController(e, setPullrequests, pullrequests) {
+	var checked = e.target.checked;
 	const temp_state = [...pullrequests];
-	for(var i = 0; i<temp_state.length; i++){
+	for (var i = 0; i < temp_state.length; i++) {
 		temp_state[i].enabled = checked;
 	}
 
 	setPullrequests(temp_state);
-
 }
-	
+
 function FetchContest(contestid, setContest) {
 	getContest(contestid).then((data) => setContest(data));
 }
@@ -209,7 +310,7 @@ function mergeArrays(pullrequests, newPullRequests, setPullrequests) {
 	setPullrequests(newArray);
 }
 
-function PullRequests({pullrequests, setCheckboxState}) {
+function PullRequests({ pullrequests, setCheckboxState }) {
 	const pulls = [];
 	if (pullrequests !== undefined && pullrequests !== undefined) {
 		for (var i = 0; i < pullrequests.length; i++) {
@@ -227,9 +328,7 @@ function PullRequests({pullrequests, setCheckboxState}) {
 	return pulls;
 }
 
-
 function PullRequestLayout(props) {
-
 	return (
 		<div className="pr-line">
 			<input
@@ -238,8 +337,7 @@ function PullRequestLayout(props) {
 				id={props.pullrequest.user + props.pullrequest.pr}
 				name="checkbox-pull"
 				checked={props.pullrequests[props.i].enabled}
-				onChange={() => props.setCheckboxState(props.i)}
-				></input>
+				onChange={() => props.setCheckboxState(props.i)}></input>
 			<div className="pr">
 				<div className="pr-header" onClick={() => toggleClass(props.i)}>
 					<p className="pr-id">#{props.pullrequest.pr}</p>

@@ -795,4 +795,34 @@ function getVotes(contestid, pullrequests) {
 	});
 }
 
+app.post("/updatecontest", (req, res) => {
+	var contestid = req.body.contestid;
+	var contestName = req.body.contestName;
+	var contestDescription = req.body.contestDescription;
+	var idToken = req.body.idToken;
+	getGithubData(idToken)
+		.then((data) => getUsername(data))
+		.then((username) => isWhitelisted(username))
+		.then((whitelisted) => {
+			if (whitelisted[1] == true) {
+				updateContest(contestid,contestName,contestDescription)
+				.then(()=>{res.json({result:"sucess"})})
+			}
+			else{
+				res.json({result:"not allowed to perform this operation"})
+			}
+		})
+	
+});
+
+function updateContest(contestid,contestName,contestDescription){
+	return new Promise((resolve,reject)=>{
+		var ref = db.ref(
+			"/contest/" + contestid
+		);
+		ref.update({name:contestName,description:contestDescription});
+		resolve("sucess")
+	})
+}
+
 exports.app = functions.https.onRequest(app);

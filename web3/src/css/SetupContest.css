@@ -169,3 +169,25 @@
   gap: 10px;
   
 }
+
+.setup-contest .block-input {
+  width: 70%;
+  height: 30px;
+  background-color: #ececec;
+  border: none;
+  border-radius: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  outline: none;
+}
+
+.setup-contest .block-area-input{
+  width: 90%;
+  height: 300px;
+  resize: vertical;
+  background-color: #ececec;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  outline: none;
+}

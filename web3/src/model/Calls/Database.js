@@ -13,7 +13,8 @@ import {
 	getwhitelisted_path,
 	getprojects_path,
 	getcontest_path,
-	exportcontest_path
+	exportcontest_path,
+	updatecontest_path
 } from "../repository";
 import moment from "moment";
 import { getIdToken, getUsername } from "./Auth";
@@ -246,6 +247,21 @@ export async function getExportData(contestid) {
 	};
 	return new Promise((resolve, reject) => {
 		fetch(server + exportcontest_path, requestOptions)
+			.then((response) => response.json())
+			.then((data) => resolve(data));
+	});
+}
+
+export async function getUpdateContest(contestid,contestName,contestDescription) {
+	var idToken = await getIdToken();
+	var data = { idToken: idToken, contestid: contestid,contestName:contestName,contestDescription:contestDescription};
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
+	};
+	return new Promise((resolve, reject) => {
+		fetch(server + updatecontest_path, requestOptions)
 			.then((response) => response.json())
 			.then((data) => resolve(data));
 	});
