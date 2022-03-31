@@ -3,7 +3,7 @@ import { reduceVote, addVote } from "./CreditsController";
 
 
 export function VoteButton(props) {
-	console.log(props)
+	//console.log(props)
 	return (
 		<div className="vote-button">
 			<div

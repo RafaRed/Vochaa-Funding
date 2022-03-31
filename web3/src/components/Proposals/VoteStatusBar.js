@@ -12,7 +12,7 @@ export function VoteStatusBar(props) {
 	var percentage = numericValidator((votes / totalVotes) * 100);
 	var reward = numericValidator((props.votes.funding / props.votes.totalVotes) * votes)
 
-	console.log(votes,totalVotes,percentage)
+	//console.log(votes,totalVotes,percentage)
 
 
 	return <div className="vote-status" key={0}>

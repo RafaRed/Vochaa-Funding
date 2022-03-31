@@ -3,6 +3,7 @@ import moment from "moment";
 import { SendVotes } from "./sendVotes";
 
 export function ConfirmVoteButton(props) {
+	//console.log(props)
 	return (
 		<button
 			onClick={props.status == 1
@@ -31,6 +32,7 @@ function GetStatusStyle(currentCredits, credits, status, props) {
 	].join(" ");
 }
 function GetStatusText(status, startDate, endDate) {
+	//console.log(startDate,endDate)
 	return status == 0
 		? "STARTS ON - " +
 		moment.unix(startDate).format("DD MMM YYYY hh:mm a").toUpperCase()

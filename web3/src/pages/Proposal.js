@@ -37,8 +37,6 @@ function Proposal(props) {
 	useEffect(()=>{
 		fetchTask(params,setTask)
 		fetchVotes(params,setVotes)
-		
-		
 	},[])
 
 	useEffect(()=>{
@@ -115,8 +113,8 @@ function Proposal(props) {
 							currentCredits={currentCredits}
 							credits={credits}
 							props={props}
-							startDate={task.startDate}
-							endDate={task.endDate}
+							startDate={votes.startDate}
+							endDate={votes.endDate}
 							username={username}>
 							
 
