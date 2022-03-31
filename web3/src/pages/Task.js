@@ -158,10 +158,10 @@ function PullRequest(params, task, votes, percentage, valueMatch) {
 			<p className="pr-id">#{task.pr}</p>
 			<p className="pr-name">{task.title}</p>
 			<div className="pr-info">
-				<p>by</p>{" "}
+				<p>by</p>
 				<a className="pr-author" href={"https://github.com/" + task.user}>
 					{task.user}
-				</a>{" "}
+				</a>
 				<p>at</p>
 				<p className="pr-date">{task.created}</p>
 			</div>
@@ -175,7 +175,7 @@ function PullRequest(params, task, votes, percentage, valueMatch) {
 					</p>
 					<p>{valueMatch}</p>
 				</div>
-				
+
 				<div className="vote-status-header">
 					<p>{votes} votes </p>
 					<p>{Math.round(percentage)}%</p>
