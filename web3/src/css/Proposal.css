@@ -4,13 +4,21 @@
 	justify-content: center;
     margin-bottom: 60px;
 }
+
+.all-content {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+    margin-bottom: 60px;
+}
 .proposal .wrapper {
 	width: 30%;
 	min-width: 400px;
+	margin-top: 60px;
 	
 }
 .proposal .header {
-	margin-top: 60px;
+
 
 	
 	display: flex;
@@ -232,14 +240,16 @@ hr.solid {
     width: 15%;
     height: 100%;
     padding-bottom: 20px;
-    margin-top: 60px;
+    margin-top: 120px;
     margin-left: 60px;
     background-color: #fff;
     border-radius: 10px;
 }
 @media only screen and (max-width: 600px) {
 	.proposal .info-block {
+		margin-top: 60px;
 		margin-left: 0px;
+		min-width: 400px;
 	}
 }
 .proposal .info-header{
@@ -329,3 +339,25 @@ hr.solid-80 {
 	color: #8a8a8a;
 	font-style: italic;
 }
+
+.proposal .back-button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	width: 120px;
+	height: 40px;
+	background-color: #3191ff;
+	border-radius: 10px;
+	box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.2);
+	font-weight: 700;
+	color: #fff;
+	margin-bottom: 20px;
+	cursor: pointer;
+	user-select: none;
+}
+.proposal .back-button img{
+	width: 15px;
+	height: 15px;
+}
+
