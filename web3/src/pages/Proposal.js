@@ -104,6 +104,8 @@ function Proposal(props) {
 							oldVotes={oldVotes}
 						/>
 
+						<div className="warning">* votes cast are final</div>
+
 						<ConfirmVoteButton
 							contestid={params.contest}
 							repositoryid={params.task}
