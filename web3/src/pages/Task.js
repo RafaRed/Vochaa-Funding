@@ -112,7 +112,7 @@ function FetchPullRequests({ params, tasks, search, seed, votesList}) {
 				}
 				//console.log("data:"+votes,totalVotes,funding)
 				var percentage = 0;
-				var valueMatch = 0;
+				var valueMatch = formatter.format(0).replace("€",tasks["contest-currency"]);
 				if(votes !== 0 ){
 					percentage = Math.round((votes / totalVotes) * 100);
 					valueMatch = formatter.format((funding / totalVotes) * votes).replace("€",tasks["contest-currency"])
@@ -155,9 +155,7 @@ function PullRequest(params, task, votes, percentage, valueMatch) {
 				<p>at</p>
 				<p className="pr-date">{task.created}</p>
 			</div>
-			<p className="pr-description">
-				<ReactMarkdown>{task.body}</ReactMarkdown>
-			</p>
+
 			<div className="divider"></div>
 
 			<p>Votes</p>

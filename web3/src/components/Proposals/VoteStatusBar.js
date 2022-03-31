@@ -6,8 +6,9 @@ var formatter = new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'E
 
 
 export function VoteStatusBar(props) {
+
 	var votes = numericValidator(props.votes.votes);
-	var totalVotes = numericValidator(props.totalVotes);
+	var totalVotes = numericValidator(props.votes.totalVotes);
 	var percentage = numericValidator((votes / totalVotes) * 100);
 	var reward = numericValidator((props.votes.funding / props.votes.totalVotes) * votes)
 
