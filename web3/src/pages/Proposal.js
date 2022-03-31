@@ -79,7 +79,7 @@ function Proposal(props) {
 			<div className="proposal">
 				
 				<div className="wrapper">
-					<div onClick={()=>backButton()} className={["back-button",props.classes.button].join(' ')}>
+					<div onClick={()=>backButton("/..")} className={["back-button",props.classes.button].join(' ')}>
 						<img src="/images/back.png"></img>
 						<p>BACK</p>
 					</div>

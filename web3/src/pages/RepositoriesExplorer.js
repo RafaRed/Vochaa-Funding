@@ -5,7 +5,7 @@ import injectSheet from "react-jss";
 import "../css/RepositoriesExplorer.css";
 import { getContest, loadTasks } from "../model/Calls/Database";
 import ReactMarkdown from "react-markdown";
-
+import { backButton } from "../utils/utils";
 
 function RepositoriesExplorer(props) {
 	const [username, setUsername] = useState("");
@@ -13,8 +13,8 @@ function RepositoriesExplorer(props) {
 	const [taskList, setTaskList] = useState([]);
 	const [contest, setContest] = useState({});
 	const [description, setDescription] = useState();
-	const [readMore,setReadMore]=useState(false);
-	const linkName=readMore?'Read Less << ':'Read More >> '
+	const [readMore, setReadMore] = useState(false);
+	const linkName = readMore ? "Read Less << " : "Read More >> ";
 	useEffect(() => {
 		FetchContest(params.contest, setContest, setDescription);
 	}, []);
@@ -25,15 +25,33 @@ function RepositoriesExplorer(props) {
 			<div className="repositories">
 				<div className="wrapper">
 					<div className="header">
-						<h1 className="title">{contest.name}</h1>
+						<div className="top">
+							<div
+								onClick={() => backButton("../../../../explore")}
+								className={["back-button", props.classes.button].join(" ")}>
+								<img src="/images/back.png"></img>
+								<p>BACK</p>
+							</div>
+
+							<p className="title">{contest.name}</p>
+						</div>
+
 						<p className="block-description">
-							<ReactMarkdown className={readMore ? "readmore" :"readless"}>{description}</ReactMarkdown>
-							<a className="read-more-link" onClick={()=>{setReadMore(!readMore)}}><p className="read-more-text">{linkName}</p></a>
+							<ReactMarkdown className={readMore ? "readmore" : "readless"}>
+								{description}
+							</ReactMarkdown>
+							<a
+								className="read-more-link"
+								onClick={() => {
+									setReadMore(!readMore);
+								}}>
+								<p className="read-more-text">{linkName}</p>
+							</a>
 						</p>
 					</div>
-					
+
 					<div className="tasks">
-					<h2 className="tasks-title">Repositories</h2>
+						<h2 className="tasks-title">Repositories</h2>
 						<LoadTasks
 							params={params}
 							taskList={taskList}
@@ -48,14 +66,14 @@ function RepositoriesExplorer(props) {
 function FetchContest(contestid, setContest, setDescription) {
 	getContest(contestid).then((data) => {
 		setContest(data);
-		formatDescription(data.description, setDescription)
+		formatDescription(data.description, setDescription);
 	});
 }
 
-function formatDescription(description, setDescription){
+function formatDescription(description, setDescription) {
 	var newDescription = description;
-	newDescription = newDescription.replace("  ", "")
-	setDescription(newDescription)
+	newDescription = newDescription.replace("  ", "");
+	setDescription(newDescription);
 }
 function LoadTasks({ params, taskList, setTaskList }) {
 	useEffect(() => {
@@ -76,7 +94,7 @@ function Task(task, key, contestid) {
 		<a
 			className="contest-button"
 			key={key}
-			href={"/contest/" + contestid + "/" + key}>
+			href={"/contest/" + contestid + "/" + key + "/"}>
 			<div className="repo-task">{task["name"]}</div>
 		</a>
 	);

@@ -8,6 +8,7 @@ import { ProjectLogo, ProjectName, ProjectSymbol, ProjectContract } from "../com
 import { GetProject } from "../components/Project/GetProject";
 import { CreateProposalButton } from "../components/Project/CreateProposalButton";
 
+
 function Project(props) {
 	const [project, setProject] = useState({ name: "", symbol: "", address: "" });
 	const [proposals, setProposals] = useState({});
@@ -19,7 +20,9 @@ function Project(props) {
 		<>
 			<Navbar menu="explore" username={username} setUsername={setUsername}/>
 			<div className="proj">
+				
 				<div className="wrapper">
+				
 					<div className="centred-block">
 						<ProjectLogo logo={project.logo} />
 						<div className="line">

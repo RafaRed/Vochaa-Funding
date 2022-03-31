@@ -3,20 +3,7 @@
 	justify-content: center;
 }
 
-.repositories .title {
-	margin-top: 60px;
-	color: #ffffff;
-	font-size: 3vw;
-	white-space: nowrap;
-	font-weight: 700;
-	margin-bottom: 20px;
-}
-@media only screen and (max-width: 800px) {
-	.repositories .title {
-		font-size: 4.5vw;
 
-	}
-}
 .repositories .description {
 	font-size: 18px;
 	text-align: center;
@@ -125,3 +112,62 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
   }
+
+
+  .repositories .title {
+
+	color: #ffffff;
+	font-size: 3vw;
+	white-space: nowrap;
+	font-weight: 700;
+	
+	line-height: 3vw;
+	text-align: center;
+
+}
+@media only screen and (max-width: 800px) {
+	.repositories .title {
+		font-size: 4.5vw;
+		line-height: 4.5vw;
+
+	}
+}
+
+
+.repositories .top{
+	margin-top: 60px;
+	margin-bottom: 20px;
+	height: 100%;
+	width: calc(45% + 60px);
+	padding: 30px;
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+
+	align-items:center;
+	align-items: flex-start;
+	justify-content:left;
+
+	
+
+}
+  
+.repositories .back-button{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	min-width: 120px;
+	min-height: 40px;
+	background-color: #3191ff;
+	border-radius: 10px;
+	box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.2);
+	font-weight: 700;
+	color: #fff;
+	cursor: pointer;
+	user-select: none;
+}
+.repositories .back-button img{
+	width: 15px;
+	height: 15px;
+}

@@ -8,13 +8,14 @@ import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import seedrandom from "seedrandom";
 import "../css/Task.css";
+import { backButton } from "../utils/utils";
 
 var formatter = new Intl.NumberFormat("de-DE", {
 	style: "currency",
 	currency: "EUR",
 });
 
-function Task() {
+function Task(props) {
 	const [username, setUsername] = useState("");
 	const params = useParams();
 
@@ -37,6 +38,10 @@ function Task() {
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
 			<div className="task">
 				<div className="wrapper">
+				<div onClick={()=>backButton("../tasks")} className={["back-button",props.classes.button].join(' ')}>
+						<img src="/images/back.png"></img>
+						<p>BACK</p>
+					</div>
 					<div className="task-info">
 						<div className="block-info">
 							<div className="block-wrapper">

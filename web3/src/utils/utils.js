@@ -6,6 +6,6 @@ export function numericValidator(value)
 	}
 	return value;
 }
-export function backButton(){
-	window.location.href = window.location.href+"/.."
+export function backButton(destination){
+	window.location.href = window.location.href+destination;
 }
