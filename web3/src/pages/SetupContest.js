@@ -249,7 +249,7 @@ function clean(string){
 function exportData(contestid, csvLink,setCsvData) {
 	getExportData(contestid).then((contestData) => {
 		var csvData = []
-		var header = ["pr_id","pr_title","pr_body","pr_author","pr_repository","pr_url","pr_date","pr_enabled","pr_votes","pr_votes_perc","pr_funding_claimed"]
+		var header = ["pr_id","pr_title","pr_body","pr_author","pr_repository","pr_url","pr_date","pr_enabled","pr_votes","pr_voters","pr_votes_perc","pr_funding_claimed"]
 		csvData.push(header)
 		for (const [repo_key, repo_value] of Object.entries(contestData.pullrequests)) {
 			for (const [pullrequest_key, pullrequest_value] of Object.entries(contestData.pullrequests[repo_key])) {
@@ -258,7 +258,18 @@ function exportData(contestid, csvLink,setCsvData) {
 				var contest_votes = numericValidator(contestData.contestVotes);
 				var votesPerc = numericValidator((pr_votes / contest_votes) * 100);
 				var fundingClaimed = numericValidator((contestData.contestFunding / contest_votes) * pr_votes);
-				var prData = [pr.pr,clean(pr.title),clean(pr.body),pr.user,pr.repository,pr.url,pr.created,pr.enabled,pr_votes,votesPerc,fundingClaimed]
+				var pr_voters = ""
+				var separator = ""
+				if(pr.voters !== undefined && pr.voters !== null){
+					for (const [voter_key, voter_value] of Object.entries(pr.voters)) {
+						pr_voters += separator+voter_key+":"+voter_value
+						separator = ","
+					}
+				}
+				
+
+
+				var prData = [pr.pr,clean(pr.title),clean(pr.body),pr.user,pr.repository,pr.url,pr.created,pr.enabled,pr_votes,pr_voters,votesPerc,fundingClaimed]
 				csvData.push(prData)
 			}
 		}

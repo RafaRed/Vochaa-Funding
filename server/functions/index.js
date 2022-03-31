@@ -786,6 +786,19 @@ function getVotes(contestid, pullrequests) {
 					
 					for (const [pullrequest_key, pullrequest_value] of Object.entries(data[repo_key])) {
 						pullrequests[repo_key][pullrequest_key]["votes"] = data[repo_key][pullrequest_key]["votes"];
+						pullrequests[repo_key][pullrequest_key]["voters"] = {};
+						for (const [voter_key, voter_value] of Object.entries(data[repo_key][pullrequest_key]["voters"])) {
+							var pullrequestVoters = pullrequests[repo_key][pullrequest_key]["voters"];
+							var dataUsername = data[repo_key][pullrequest_key]["voters"][voter_key]["username"]
+							var dataVotes = data[repo_key][pullrequest_key]["voters"][voter_key]["votes"]
+						
+							if(pullrequestVoters[dataUsername] !== undefined && pullrequestVoters[dataUsername] !== null){
+								pullrequests[repo_key][pullrequest_key]["voters"][dataUsername] += dataVotes;
+							}
+							else{
+								pullrequests[repo_key][pullrequest_key]["voters"][dataUsername] = dataVotes;
+							}
+						}
 					}
 				}
 				//console.log(pullrequests)
