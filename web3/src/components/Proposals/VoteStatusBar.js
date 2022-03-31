@@ -56,7 +56,7 @@ export function VoteStatusBar(props) {
 		</div>
 
 		<div className="vote-status-match">
-			<p> <b>Value Math</b></p>
+			<p> <b>Reward</b></p>
 			<p>{formatter.format((props.votes.funding / props.votes.totalVotes) * props.votes.votes).replace("€",props.votes.currency)}</p>
 		</div>
 	</div>;

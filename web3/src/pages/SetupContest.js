@@ -12,6 +12,7 @@ import {
 	getExportData,
 	getUpdateContest,
 } from "../model/Calls/Database";
+import { CSVLink } from "react-csv";
 import moment from "moment";
 
 function SetupContest() {
@@ -25,6 +26,9 @@ function SetupContest() {
 	const [contest, setContest] = useState({});
 	const [pullrequests, setPullrequests] = useState([]);
 	const params = useParams();
+	const csvLink = useRef();
+	const [csvData, setCsvData] = useState([]);
+
 	useEffect(() => {
 		FetchContest(params.contest, setContest);
 	}, []);
@@ -64,9 +68,9 @@ function SetupContest() {
 								edit,
 								params,
 								handleOnChangeContestData,
-								setContest
+								setContest,csvLink,setCsvData
 						  )
-						: StaticData(contest, formatter, setEdit, edit, params)}
+						: StaticData(contest, formatter, setEdit, edit, params,csvLink,setCsvData)}
 
 					<div className="block">
 						<div className="pull-header">
@@ -92,6 +96,13 @@ function SetupContest() {
 									}>
 									SAVE
 								</button>
+								<CSVLink
+									data={csvData}
+									filename={contest.name+".csv"}
+									className="hidden"
+									ref={csvLink}
+									target="_blank"
+								/>
 							</div>
 						</div>
 						<div className="divider"></div>
@@ -117,7 +128,7 @@ function SetupContest() {
 		</>
 	);
 }
-function StaticData(contest, formatter, setEdit, edit, params) {
+function StaticData(contest, formatter, setEdit, edit, params, csvLink, setCsvData) {
 	return (
 		<div className="block">
 			<div className="header">
@@ -143,7 +154,7 @@ function StaticData(contest, formatter, setEdit, edit, params) {
 					<button className="edit" onClick={() => setEdit(true)}>
 						EDIT
 					</button>
-					<button className="edit" onClick={() => exportData(params.contest)}>
+					<button className="edit" onClick={() => exportData(params.contest, csvLink,setCsvData)}>
 						Export
 					</button>
 				</div>
@@ -162,7 +173,9 @@ function EdditableData(
 	edit,
 	params,
 	handleOnChangeContestData,
-	setContest
+	setContest,
+	csvLink,
+	setCsvData
 ) {
 	return (
 		<div className="block">
@@ -172,13 +185,17 @@ function EdditableData(
 						<img className="logo" src={contest.logourl} />
 					</div>
 					<div className="labels">
-						<h2><input
-							type="text"
-							onChange={(e) => handleOnChangeContestData(e, contest, setContest, "name")}
-							className="block-input"
-							defaultValue={contest.name}
-						/></h2>
-						
+						<h2>
+							<input
+								type="text"
+								onChange={(e) =>
+									handleOnChangeContestData(e, contest, setContest, "name")
+								}
+								className="block-input"
+								defaultValue={contest.name}
+							/>
+						</h2>
+
 						<p>
 							from {moment.unix(contest.startDate).format("MM/DD/YYYY")} to{" "}
 							{moment.unix(contest.endDate).format("MM/DD/YYYY")}
@@ -192,34 +209,68 @@ function EdditableData(
 					</div>
 				</div>
 				<div className="buttons">
-					<button className="save" onClick={() => updateContest(params.contest,contest.name,contest.description)}>
+					<button
+						className="save"
+						onClick={() =>
+							updateContest(params.contest, contest.name, contest.description)
+						}>
 						SAVE
 					</button>
-					<button className="edit" onClick={() => exportData(params.contest)}>
+					<button className="edit" onClick={() => exportData(params.contest, csvLink,setCsvData)}>
 						Export
 					</button>
 				</div>
 			</div>
-		
+
 			<textarea
-			cols="40" rows="5"
+				cols="40"
+				rows="5"
 				type="text"
 				defaultValue={contest.description}
-				onChange={(e) => handleOnChangeContestData(e, contest, setContest, "description")}
+				onChange={(e) =>
+					handleOnChangeContestData(e, contest, setContest, "description")
+				}
 				className={["block-area-input"].join(" ")}
 			/>
-
 		</div>
 	);
 }
 
-function updateContest(contestid,contestName,contestDescription){
-	getUpdateContest(contestid,contestName,contestDescription)
-	.then(()=>window.location.reload(false))
+function updateContest(contestid, contestName, contestDescription) {
+	getUpdateContest(contestid, contestName, contestDescription).then(() =>
+		window.location.reload(false)
+	);
 }
 
-function exportData(contestid) {
-	getExportData(contestid).then((result) => console.log(result));
+function clean(string){
+	return string.replace(/,/g, '-').replace(";",".").replace(/"/g, '``');
+}
+function exportData(contestid, csvLink,setCsvData) {
+	getExportData(contestid).then((contestData) => {
+		var csvData = []
+		var header = ["pr_id","pr_title","pr_body","pr_author","pr_repository","pr_url","pr_date","pr_enabled","pr_votes","pr_votes_perc","pr_funding_claimed"]
+		csvData.push(header)
+		for (const [repo_key, repo_value] of Object.entries(contestData.pullrequests)) {
+			for (const [pullrequest_key, pullrequest_value] of Object.entries(contestData.pullrequests[repo_key])) {
+				var pr = contestData.pullrequests[repo_key][pullrequest_key]
+				var pr_votes = pr.votes;
+				var contest_votes = contestData.contestVotes;
+				if(pr_votes === undefined || pr_votes === NaN){
+					pr_votes = 0;
+				}
+				if(contest_votes === undefined || contest_votes === NaN){
+					contest_votes = 0;
+				}
+				var votesPerc = (pr_votes / contest_votes) * 100;
+				var fundingClaimed = (contestData.contestFunding / contest_votes) * pr_votes;
+
+				var prData = [pr.pr,clean(pr.title),clean(pr.body),pr.user,pr.repository,pr.url,pr.created,pr.enabled,pr_votes,votesPerc,fundingClaimed]
+				csvData.push(prData)
+			}
+		}
+		setCsvData(csvData)
+		csvLink.current.link.click()
+	});
 }
 function CheckboxController(e, setPullrequests, pullrequests) {
 	var checked = e.target.checked;

@@ -162,7 +162,7 @@ function PullRequest(params, task, votes, percentage, valueMatch) {
 
 			<p>Votes</p>
 			<p className="pr-contributors">{votes}</p>
-			<p>Value Match</p>
+			<p>Reward</p>
 			<p>{valueMatch} {percentage}%</p>
 			<a
 				className="view-button-wrapper"
