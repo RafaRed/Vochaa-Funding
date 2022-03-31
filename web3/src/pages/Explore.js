@@ -43,7 +43,7 @@ function Explore(props) {
 						<Title></Title>
 						<Description></Description>
 						<SearchBar setSearch={setSearch}></SearchBar>
-						<AddContest links={props.classes.links}></AddContest>
+						{/*<AddContest links={props.classes.links}></AddContest>*/}
 					</div>
 					<div className="board">
 						<CreateBoard

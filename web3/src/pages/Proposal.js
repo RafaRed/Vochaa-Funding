@@ -11,6 +11,7 @@ import { LoadVotes } from "../components/Proposals/LoadVotes";
 import {
 	getCredits,
 	getPullrequest,
+	getVoters,
 	getVotes,
 	sendVotes,
 } from "../model/Calls/Database";
@@ -24,8 +25,6 @@ import {
 } from "firebase/auth";
 import { backButton } from "../utils/utils";
 
-
-
 function Proposal(props) {
 	const [project, setProject] = useState({
 		name: "#1 - Pull Request Title",
@@ -35,6 +34,7 @@ function Proposal(props) {
 	const [credits, setCredits] = useState(0);
 	const [currentCredits, setCurrentCredits] = useState(0);
 	const [vote, setVote] = useState(0);
+	const [voters, setVoters] = useState({});
 	const [votes, setVotes] = useState(0);
 	const [currentVotes, setCurrentVotes] = useState([]);
 	const [proposal, setProposal] = useState({
@@ -49,6 +49,7 @@ function Proposal(props) {
 	useEffect(() => {
 		fetchTask(params, setTask);
 		fetchVotes(params, setVotes);
+		fetchVoters(params, setVoters);
 	}, []);
 
 	useEffect(() => {
@@ -57,34 +58,22 @@ function Proposal(props) {
 		});
 	}, []);
 
-	/*LoadVotes(
-		params,
-		setProject,
-		setProposal,
-		setCredits,
-		setCurrentCredits,
-		setCurrentVotes,
-		proposal,
-		vote,
-		setVote
-	);*/
-
 	var now = moment().unix();
 	var status = getStatus(now, votes);
 
 	return (
 		<div>
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
-			
+
 			<div className="proposal">
-				
 				<div className="wrapper">
-					<div onClick={()=>backButton("/..")} className={["back-button",props.classes.button].join(' ')}>
+					<div
+						onClick={() => backButton("/..")}
+						className={["back-button", props.classes.button].join(" ")}>
 						<img src="/images/back.png"></img>
 						<p>BACK</p>
 					</div>
 					<div className="header">
-					
 						<div className="line">
 							{/*<div className="image-block">
 								<img src={task.logo} />
@@ -137,42 +126,75 @@ function Proposal(props) {
 							username={username}></ConfirmVoteButton>
 					</div>
 				</div>
-				<div className="info-block">
-					<div className="info-header">
-						<p className="title">Information</p>
-						<hr className="solid-80"></hr>
+				<div className="block-2">
+					<div className="info-block">
+						<div className="info-header">
+							<p className="title">Information</p>
+							<hr className="solid-80"></hr>
+						</div>
+						<div className="line">
+							<p>Created by</p>
+							<a className="author" href={"https://github.com/" + task.user}>
+								{task.user}
+							</a>
+						</div>
+						<div className="line">
+							<p>Creation Date</p>
+							<p>{task.created}</p>
+						</div>
+						<div className="line">
+							<a className="author" href={task.url}>
+								View on Github
+							</a>
+						</div>
+
+						<div className="info-header-2">
+							<p className="title">Current Results</p>
+							<hr className="solid-80"></hr>
+						</div>
+						<VoteStatusBar votes={votes} task={task} />
 					</div>
-					<div className="line">
-						<p>Created by</p>
-						<a className="author" href={"https://github.com/" + task.user}>
-							{task.user}
-						</a>
-					</div>
-					<div className="line">
-						<p>Creation Date</p>
-						<p>{task.created}</p>
-					</div>
-					<div className="line">
-						<a className="author" href={task.url}>
-							View on Github
-						</a>
-					</div>
-					{/*<div className="line">
-						<p>Start Date</p>
-						<p>{moment.unix(proposal.startDate).format("DD MMM YYYY hh:mm a")}</p>
-					</div>
-					<div className="line">
-						<p>End Date</p>
-						<p>{moment.unix(proposal.endDate).format("DD MMM YYYY hh:mm a")}</p>
-					</div>*/}
-					<div className="info-header-2">
-						<p className="title">Current Results</p>
-						<hr className="solid-80"></hr>
-					</div>
-					<VoteStatusBar votes={votes} task={task} />
+					{Object.keys(voters).length > 0 ? (
+						<DisplayVoters voters={voters}></DisplayVoters>
+					) : (
+						<></>
+					)}
 				</div>
 			</div>
 		</div>
+	);
+}
+
+function DisplayVoters({ voters }) {
+	var lines = [];
+	var hasDivider = false;
+	for (const [voter_key, voter_value] of Object.entries(voters)) {
+		lines.push(Voter(voter_key, voter_value,hasDivider));
+		hasDivider = true;
+	}
+	return (
+		<div className="info-block-2">
+			<div className="info-header-voters">
+				<p className="title">Voters</p>
+				<hr className="solid-80-3"></hr>
+			</div>
+			<div className="voters-line">
+			{lines}
+			</div>
+			
+		</div>
+	);
+}
+
+function Voter(name, votes, hasDivider) {
+	return (
+		<>
+			{hasDivider ? <hr className="solid-80-2"></hr> : ""}
+			<p key={name}>
+				{name} - {votes} votes
+			</p>
+			
+		</>
 	);
 }
 function fetchTask(params, setTask) {
@@ -186,6 +208,20 @@ function fetchVotes(params, setVotes) {
 		setVotes(data)
 	);
 }
+
+function fetchVoters(params, setVoters) {
+	getVoters(params.contest, params.task, params.proposal).then((data) => {
+		if (
+			data.result !== undefined &&
+			data.result === "now allowed to show voters"
+		) {
+			console.log(data);
+		} else {
+			setVoters(data);
+		}
+	});
+}
+
 function fetchCredits(
 	params,
 	setCredits,

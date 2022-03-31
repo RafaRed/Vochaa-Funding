@@ -8,8 +8,8 @@ import { AddProjectButton } from "../components/ProjectForm/AddProjectButton";
 function CreateProject(props) {
 	const [startDate, setStartDate] = useState();
 	const [endDate, setEndDate] = useState();
-	const [dataChanged,setDataChanged] = useState(false);
-	const [contest, setContest] = useState({});
+	const [dataChanged, setDataChanged] = useState(false);
+	const [contest, setContest] = useState({showvoters:true});
 	const [repositories, setRepositories] = useState([]);
 	const repositoryName = useRef();
 	const repositoryDescription = useRef();
@@ -17,16 +17,31 @@ function CreateProject(props) {
 	const [status, setStatus] = useState("");
 	const [username, setUsername] = useState("");
 
-	const handleOnChangeContestData = (e, functionValue, setFunction, prop) => {
+	const handleOnChangeContestDataCheckbox = (e, functionValue, setFunction, prop) => {
+		
 		var currentValues = functionValue;
-		currentValues[prop] = e.target.value;
-		setDataChanged(true)
+		var propValue = e.target.value;
+		if(e.target.checked !== undefined){
+			propValue = e.target.checked;
+		}
+		currentValues[prop] = propValue;
+		setDataChanged(true);
 		setFunction(currentValues);
 	};
 
+	const handleOnChangeContestData = (e, functionValue, setFunction, prop) => {
+		console.log(e)
+		var currentValues = functionValue;
+		var propValue = e.target.value;
+		currentValues[prop] = propValue;
+		setDataChanged(true);
+		setFunction(currentValues);
+	};
+	console.log(contest)
+
 	return (
 		<>
-			<Navbar menu="explore" setUsername={setUsername} username={username}/>
+			<Navbar menu="explore" setUsername={setUsername} username={username} />
 			<div className="project">
 				<div className="wrapper">
 					<div className="header">
@@ -67,8 +82,14 @@ function CreateProject(props) {
 						handleOnChangeContestData={(e) =>
 							handleOnChangeContestData(e, contest, setContest, "funding")
 						}></BlockFunding>
-						
-						<BlockCurrency
+
+					<BlockShowVoters
+						buttonStyle={props.classes.buttonStyle}
+						handleOnChangeContestData={(e) =>
+							handleOnChangeContestDataCheckbox(e, contest, setContest, "showvoters")
+						}></BlockShowVoters>
+
+					<BlockCurrency
 						buttonStyle={props.classes.buttonStyle}
 						handleOnChangeContestData={(e) =>
 							handleOnChangeContestData(e, contest, setContest, "currency")
@@ -98,7 +119,9 @@ function CreateProject(props) {
 						repositories={repositories}
 						setRepositories={setRepositories}></BlockAddRepositories>
 
-					<BlockShowRepositories repositories={repositories} setRepositories={setRepositories}></BlockShowRepositories>
+					<BlockShowRepositories
+						repositories={repositories}
+						setRepositories={setRepositories}></BlockShowRepositories>
 
 					<BlockDate
 						startDate={startDate}
@@ -150,7 +173,8 @@ function BlockDescription(props) {
 			<h2 className="block-title">Description</h2>
 			<p className="block-description">Enter the contest description and rules</p>
 			<textarea
-			cols="40" rows="5"
+				cols="40"
+				rows="5"
 				type="text"
 				onChange={props.handleOnChangeContestData}
 				className={["block-area-input", props.buttonStyle].join(" ")}
@@ -162,7 +186,7 @@ function BlockDescription(props) {
 function BlockLogo(props) {
 	return (
 		<div className="block-image">
-			<div >
+			<div>
 				<img className="lazy-image" src={props.logourl}></img>
 			</div>
 			<div className="content">
@@ -207,11 +231,25 @@ function BlockFunding(props) {
 		</div>
 	);
 }
+function BlockShowVoters(props) {
+	return (
+		<div className="block">
+			<h2 className="block-title">Show Voters</h2>
+
+			<div class="checkbox-labeled">
+				<input type="checkbox" defaultChecked={true} onChange={props.handleOnChangeContestData}/>
+				<p>Show voters and votes publicly.</p>
+			</div>
+		</div>
+	);
+}
 function BlockCurrency(props) {
 	return (
 		<div className="block">
 			<h2 className="block-title">Currency Symbol</h2>
-			<p className="block-description">Enter the currency symbol, for US Dollars you can use "USD"</p>
+			<p className="block-description">
+				Enter the currency symbol, for US Dollars you can use "USD"
+			</p>
 			<input
 				type="text"
 				onChange={props.handleOnChangeContestData}
@@ -259,8 +297,8 @@ function BlockAddRepositories(props) {
 function addRepository(props) {
 	if (
 		props.repositoryName.current.value != "" &&
-		props.repositoryDescription.current.value != ""
-		&& props.repositoryURL.current.value != ""
+		props.repositoryDescription.current.value != "" &&
+		props.repositoryURL.current.value != ""
 	) {
 		var data = {
 			name: props.repositoryName.current.value,
@@ -280,24 +318,30 @@ function BlockShowRepositories(props) {
 }
 
 function FetchRepositories(props) {
-		var rows = [];
-		for (var i = 0; i < props.repositories.length; i++) {
-			rows.push(
-				repositoryItem(
-					props.repositories[i].name,
-					props.repositories[i].description,
-					props.repositories[i].url,
-					i,
-					props.repositories,
-					props.setRepositories
-				)
-			);
-		}
-		return <div>{rows}</div>;
-	
+	var rows = [];
+	for (var i = 0; i < props.repositories.length; i++) {
+		rows.push(
+			repositoryItem(
+				props.repositories[i].name,
+				props.repositories[i].description,
+				props.repositories[i].url,
+				i,
+				props.repositories,
+				props.setRepositories
+			)
+		);
+	}
+	return <div>{rows}</div>;
 }
 
-function repositoryItem(name, description, url, id, repositories, setRepositories) {
+function repositoryItem(
+	name,
+	description,
+	url,
+	id,
+	repositories,
+	setRepositories
+) {
 	return (
 		<div key={id}>
 			<h2 className="block-title">{name}</h2>
@@ -314,10 +358,9 @@ function repositoryItem(name, description, url, id, repositories, setRepositorie
 function removeRepositoryItem(id, repositories, setRepositories) {
 	var array = [...repositories];
 	if (id !== -1) {
-	  array.splice(id, 1);
-	  setRepositories(array);
+		array.splice(id, 1);
+		setRepositories(array);
 	}
-
 }
 
 const styles = {

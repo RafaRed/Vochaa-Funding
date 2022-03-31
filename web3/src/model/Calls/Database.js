@@ -14,7 +14,8 @@ import {
 	getprojects_path,
 	getcontest_path,
 	exportcontest_path,
-	updatecontest_path
+	updatecontest_path,
+	getvoters_path
 } from "../repository";
 import moment from "moment";
 import { getIdToken, getUsername } from "./Auth";
@@ -33,6 +34,7 @@ export async function createContest(contest, startDate, endDate, repositories) {
 		timestamp: moment().unix(),
 		idToken: idToken,
 		currency: contest.currency,
+		showvoters: contest.showvoters,
 		repositories: repositories,
 	};
 
@@ -262,6 +264,21 @@ export async function getUpdateContest(contestid,contestName,contestDescription)
 	};
 	return new Promise((resolve, reject) => {
 		fetch(server + updatecontest_path, requestOptions)
+			.then((response) => response.json())
+			.then((data) => resolve(data));
+	});
+}
+
+export async function getVoters(contestid,repositoryid,pullrequestid) {
+
+	var data = { contestid: contestid, repositoryid:repositoryid, pullrequestid:pullrequestid };
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
+	};
+	return new Promise((resolve, reject) => {
+		fetch(server + getvoters_path, requestOptions)
 			.then((response) => response.json())
 			.then((data) => resolve(data));
 	});

@@ -234,11 +234,16 @@ hr.solid {
 
 }
 
-
+.proposal .block-2{
+	display: flex;
+	flex-direction: column;
+}
 .proposal .info-block{
+	display: flex;
+	flex-direction: column;
 	min-width: 300px;
     width: 15%;
-    height: 100%;
+
     padding-bottom: 20px;
     margin-top: 120px;
     margin-left: 60px;
@@ -252,6 +257,27 @@ hr.solid {
 		min-width: 400px;
 	}
 }
+
+.proposal .info-block-2{
+	display: flex;
+	flex-direction: column;
+	min-width: 300px;
+    width: 15%;
+	height: 100%;
+    padding-bottom: 20px;
+	margin-top: 20px;
+    margin-left: 60px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+@media only screen and (max-width: 600px) {
+	.proposal .info-block-2 {
+		margin-top: 60px;
+		margin-left: 0px;
+		min-width: 400px;
+	}
+}
+
 .proposal .info-header{
     margin-top: 20px;
     display: flex;
@@ -269,6 +295,13 @@ hr.solid-80 {
 	margin-top: 20px;
 	margin-bottom: 20px;
 	border-top: 1px solid rgb(36, 28, 28);
+}
+
+hr.solid-80-2 {
+    width: 80%;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border-top: 1px solid rgba(49, 49, 49, 0.199);
 }
 
 .proposal .info-block .line{
@@ -359,5 +392,33 @@ hr.solid-80 {
 .proposal .back-button img{
 	width: 15px;
 	height: 15px;
+}
+
+hr.solid-80-3 {
+    width: 70%;
+	border-top: 1px solid rgba(49, 49, 49, 0.199);
+}
+
+.proposal .info-header-voters{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.proposal .voters-line{
+	height: 180px;
+	overflow: auto;
+	margin-right: 20px;
+	margin-left: 20px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.proposal .info-header-voters .title{
+    font-size: 20px;
+	margin-bottom: 10px;
 }
 

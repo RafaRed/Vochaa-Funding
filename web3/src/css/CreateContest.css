@@ -258,3 +258,9 @@
   margin-top: -10px;
   margin-bottom: 10px;
 }
+
+.project .checkbox-labeled{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

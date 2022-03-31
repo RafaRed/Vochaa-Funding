@@ -99,6 +99,7 @@ function registerContest(data, username) {
 		timestamp: data.timestamp,
 		sender: username,
 		currency: data.currency,
+		showvoters: data.showvoters,
 		votes: 0,
 	});
 
@@ -322,9 +323,26 @@ app.post("/getvotes", (req, res) => {
 				funding: result.funding,
 				startDate: result.startDate,
 				endDate: result.endDate,
-				currency: result.currency
+				currency: result.currency,
+				showvoters: result.showvoters
 			});
 		});
+});
+
+app.post("/getvoters", (req, res) => {
+	var contestid = req.body.contestid;
+	var repositoryid = req.body.repositoryid;
+	var pullrequestid = req.body.pullrequestid;
+	isShowVotersEnabled(contestid).then((result) => {
+		if (result.showvoters) {
+			getPullrequestVoters(contestid, repositoryid, pullrequestid).then((result) =>
+				res.json(result)
+			);
+		}
+		else{
+			res.json({"result":"now allowed to show voters"})
+		}
+	});
 });
 
 function getContestVotes(contestid) {
@@ -338,7 +356,21 @@ function getContestVotes(contestid) {
 				funding: data.funding,
 				startDate: data.startDate,
 				endDate: data.endDate,
-				currency: data.currency
+				currency: data.currency,
+				showvoters: data.showvoters
+			});
+		});
+	});
+}
+
+function isShowVotersEnabled(contestid) {
+	return new Promise((resolve, reject) => {
+		var ref = db.ref("/contest/" + contestid);
+		ref.once("value", function (snapshot) {
+			var data = snapshot.val();
+			votes = data.votes;
+			resolve({
+				showvoters: data.showvoters,
 			});
 		});
 	});
@@ -357,6 +389,34 @@ function getPullrequestVotes(contestid, repositoryid, pullrequestid) {
 			}
 
 			resolve(votes);
+		});
+	});
+}
+
+function getPullrequestVoters(contestid, repositoryid, pullrequestid) {
+	return new Promise((resolve, reject) => {
+		var refVotes = db.ref(
+			"/votes/" + contestid + "/" + repositoryid + "/" + pullrequestid
+		);
+		refVotes.once("value", function (snapshot) {
+			if (snapshot.exists()) {
+				var data = snapshot.val();
+				var voters = {};
+
+				for (const [voter_key, voter_value] of Object.entries(data["voters"])) {
+					var dataUsername = data["voters"][voter_key]["username"];
+					var dataVotes = data["voters"][voter_key]["votes"];
+
+					if (voters[dataUsername] !== undefined && voters[dataUsername] !== null) {
+						voters[dataUsername] += dataVotes;
+					} else {
+						voters[dataUsername] = dataVotes;
+					}
+				}
+
+				//console.log(pullrequests)
+				resolve(voters);
+			}
 		});
 	});
 }
@@ -518,7 +578,8 @@ app.post("/getpullrequestsvotes", (req, res) => {
 				funding: result.funding,
 				startDate: result.startDate,
 				endDate: result.endDate,
-				currency: result.currency
+				currency: result.currency,
+
 			});
 		});
 });
@@ -702,11 +763,11 @@ app.post("/exportcontest", (req, res) => {
 					.then((result) => {
 						repositories = result;
 					})
-					.then(() => getPullRequests(contestid,repositories))
+					.then(() => getPullRequests(contestid, repositories))
 					.then((result) => {
 						pullrequests = result;
 					})
-					.then(() => getVotes(contestid, pullrequests,repositories))
+					.then(() => getVotes(contestid, pullrequests, repositories))
 					.then((result) => {
 						pullrequests = result;
 						res.json({
@@ -715,9 +776,8 @@ app.post("/exportcontest", (req, res) => {
 							pullrequests: pullrequests,
 						});
 					});
-			}
-			else{
-				res.json({"response":"User not allowed to perform this operation"})
+			} else {
+				res.json({ response: "User not allowed to perform this operation" });
 			}
 		});
 });
@@ -735,7 +795,7 @@ function getRepositories(contestid) {
 	});
 }
 
-function getPullRequests(contestid,repositories) {
+function getPullRequests(contestid, repositories) {
 	return new Promise((resolve, reject) => {
 		var refPullrequests = db.ref("/pullrequests/" + contestid);
 		refPullrequests.once("value", function (snapshot) {
@@ -744,59 +804,69 @@ function getPullRequests(contestid,repositories) {
 				var data = snapshot.val();
 				for (const [user_key, user_value] of Object.entries(data)) {
 					for (const [repo_key, repo_value] of Object.entries(data[user_key])) {
-						var repositoryid = getRepositoryId(user_key,repo_key,repositories)
-						pullrequests[repositoryid] = {}
+						var repositoryid = getRepositoryId(user_key, repo_key, repositories);
+						pullrequests[repositoryid] = {};
 						for (const [pullrequest_key, pullrequest_value] of Object.entries(
 							data[user_key][repo_key]
 						)) {
-							
-
-							pullrequests[repositoryid][pullrequest_key] = data[user_key][repo_key][pullrequest_key];
+							pullrequests[repositoryid][pullrequest_key] =
+								data[user_key][repo_key][pullrequest_key];
 						}
 					}
 				}
-				
 			}
 			resolve(pullrequests);
 		});
 	});
 }
 
-function getRepositoryId(user,repo,repositories){
+function getRepositoryId(user, repo, repositories) {
 	for (const [repo_key, repo_value] of Object.entries(repositories)) {
 		repositoryPath = repositories[repo_key].url.split("/");
-		if(repositoryPath[repositoryPath.length - 2] === user && repositoryPath[repositoryPath.length - 1] === repo){
+		if (
+			repositoryPath[repositoryPath.length - 2] === user &&
+			repositoryPath[repositoryPath.length - 1] === repo
+		) {
 			//console.log(repo_key)
 			return repo_key;
 		}
 	}
-	
 }
 
 function getVotes(contestid, pullrequests) {
-	console.log("getvotes")
+	console.log("getvotes");
 	return new Promise((resolve, reject) => {
 		var refVotes = db.ref("/votes/" + contestid);
 		refVotes.once("value", function (snapshot) {
 			if (snapshot.exists()) {
 				var data = snapshot.val();
-				
 
 				for (const [repo_key, repo_value] of Object.entries(data)) {
-					
-					for (const [pullrequest_key, pullrequest_value] of Object.entries(data[repo_key])) {
-						pullrequests[repo_key][pullrequest_key]["votes"] = data[repo_key][pullrequest_key]["votes"];
+					for (const [pullrequest_key, pullrequest_value] of Object.entries(
+						data[repo_key]
+					)) {
+						pullrequests[repo_key][pullrequest_key]["votes"] =
+							data[repo_key][pullrequest_key]["votes"];
 						pullrequests[repo_key][pullrequest_key]["voters"] = {};
-						for (const [voter_key, voter_value] of Object.entries(data[repo_key][pullrequest_key]["voters"])) {
-							var pullrequestVoters = pullrequests[repo_key][pullrequest_key]["voters"];
-							var dataUsername = data[repo_key][pullrequest_key]["voters"][voter_key]["username"]
-							var dataVotes = data[repo_key][pullrequest_key]["voters"][voter_key]["votes"]
-						
-							if(pullrequestVoters[dataUsername] !== undefined && pullrequestVoters[dataUsername] !== null){
-								pullrequests[repo_key][pullrequest_key]["voters"][dataUsername] += dataVotes;
-							}
-							else{
-								pullrequests[repo_key][pullrequest_key]["voters"][dataUsername] = dataVotes;
+						for (const [voter_key, voter_value] of Object.entries(
+							data[repo_key][pullrequest_key]["voters"]
+						)) {
+							var pullrequestVoters =
+								pullrequests[repo_key][pullrequest_key]["voters"];
+							var dataUsername =
+								data[repo_key][pullrequest_key]["voters"][voter_key]["username"];
+							var dataVotes =
+								data[repo_key][pullrequest_key]["voters"][voter_key]["votes"];
+
+							if (
+								pullrequestVoters[dataUsername] !== undefined &&
+								pullrequestVoters[dataUsername] !== null
+							) {
+								pullrequests[repo_key][pullrequest_key]["voters"][dataUsername] +=
+									dataVotes;
+							} else {
+								pullrequests[repo_key][pullrequest_key]["voters"][dataUsername] =
+									dataVotes;
 							}
 						}
 					}
@@ -818,24 +888,21 @@ app.post("/updatecontest", (req, res) => {
 		.then((username) => isWhitelisted(username))
 		.then((whitelisted) => {
 			if (whitelisted[1] == true) {
-				updateContest(contestid,contestName,contestDescription)
-				.then(()=>{res.json({result:"sucess"})})
+				updateContest(contestid, contestName, contestDescription).then(() => {
+					res.json({ result: "sucess" });
+				});
+			} else {
+				res.json({ result: "not allowed to perform this operation" });
 			}
-			else{
-				res.json({result:"not allowed to perform this operation"})
-			}
-		})
-	
+		});
 });
 
-function updateContest(contestid,contestName,contestDescription){
-	return new Promise((resolve,reject)=>{
-		var ref = db.ref(
-			"/contest/" + contestid
-		);
-		ref.update({name:contestName,description:contestDescription});
-		resolve("sucess")
-	})
+function updateContest(contestid, contestName, contestDescription) {
+	return new Promise((resolve, reject) => {
+		var ref = db.ref("/contest/" + contestid);
+		ref.update({ name: contestName, description: contestDescription });
+		resolve("sucess");
+	});
 }
 
 exports.app = functions.https.onRequest(app);
