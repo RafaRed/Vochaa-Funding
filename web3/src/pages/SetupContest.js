@@ -14,6 +14,7 @@ import {
 } from "../model/Calls/Database";
 import { CSVLink } from "react-csv";
 import moment from "moment";
+import { numericValidator } from "../utils/utils";
 
 function SetupContest() {
 	const [username, setUsername] = useState("");
@@ -253,17 +254,10 @@ function exportData(contestid, csvLink,setCsvData) {
 		for (const [repo_key, repo_value] of Object.entries(contestData.pullrequests)) {
 			for (const [pullrequest_key, pullrequest_value] of Object.entries(contestData.pullrequests[repo_key])) {
 				var pr = contestData.pullrequests[repo_key][pullrequest_key]
-				var pr_votes = pr.votes;
-				var contest_votes = contestData.contestVotes;
-				if(pr_votes === undefined || pr_votes === NaN){
-					pr_votes = 0;
-				}
-				if(contest_votes === undefined || contest_votes === NaN){
-					contest_votes = 0;
-				}
-				var votesPerc = (pr_votes / contest_votes) * 100;
-				var fundingClaimed = (contestData.contestFunding / contest_votes) * pr_votes;
-
+				var pr_votes = numericValidator(pr.votes);
+				var contest_votes = numericValidator(contestData.contestVotes);
+				var votesPerc = numericValidator((pr_votes / contest_votes) * 100);
+				var fundingClaimed = numericValidator((contestData.contestFunding / contest_votes) * pr_votes);
 				var prData = [pr.pr,clean(pr.title),clean(pr.body),pr.user,pr.repository,pr.url,pr.created,pr.enabled,pr_votes,votesPerc,fundingClaimed]
 				csvData.push(prData)
 			}
