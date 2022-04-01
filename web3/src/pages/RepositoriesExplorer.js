@@ -5,7 +5,11 @@ import injectSheet from "react-jss";
 import "../css/RepositoriesExplorer.css";
 import { getContest, loadTasks } from "../model/Calls/Database";
 import ReactMarkdown from "react-markdown";
-import { backButton } from "../utils/utils";
+import { backButton, fetchContestCredits } from "../utils/utils";
+import { auth, provider } from "../model/firebaseConnect";
+import {
+	onAuthStateChanged,
+} from "firebase/auth";
 
 function RepositoriesExplorer(props) {
 	const [username, setUsername] = useState("");
@@ -14,14 +18,23 @@ function RepositoriesExplorer(props) {
 	const [contest, setContest] = useState({});
 	const [description, setDescription] = useState();
 	const [readMore, setReadMore] = useState(false);
+	const [userCredits, setUserCredits] = useState()
 	const linkName = readMore ? "Read Less << " : "Read More >> ";
 	useEffect(() => {
 		FetchContest(params.contest, setContest, setDescription);
+		
+	}, []);
+
+	useEffect(() => {
+		onAuthStateChanged(auth, (currentUser) => {
+			fetchContestCredits(params.contest,setUserCredits)
+			console.log(userCredits)
+		});
 	}, []);
 
 	return (
 		<>
-			<Navbar menu="explore" username={username} setUsername={setUsername} />
+			<Navbar menu="explore" username={username} setUsername={setUsername} userCredits={userCredits} />
 			<div className="repositories">
 				<div className="wrapper">
 					<div className="header">

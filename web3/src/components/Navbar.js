@@ -21,8 +21,11 @@ function Navbar(props) {
   <a className={props.menu === "explore" ? "active" : ""} href="/explore">CONTESTS</a>
   <a className={props.menu === "about" ? "active" : ""} href="https://github.com/RafaRed/Vochaa-Funding">ABOUT</a>
   </div>
- 
+  <div className="contestheader">
+  <div>{props.userCredits !== undefined ? props.userCredits + " Credits" : "" }</div>
   <ConnectGitHub setUsername={props.setUsername} username={props.username}/>
+  </div>
+  
 </div>;
 }
 

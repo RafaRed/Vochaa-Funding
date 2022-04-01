@@ -63,7 +63,7 @@ function Proposal(props) {
 
 	return (
 		<div>
-			<Navbar menu="explore" username={username} setUsername={setUsername} />
+			<Navbar menu="explore" username={username} setUsername={setUsername} userCredits={credits} />
 
 			<div className="proposal">
 				<div className="wrapper">

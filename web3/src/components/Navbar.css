@@ -31,7 +31,7 @@
 
 .topnav .metamask {
 margin-right: 10px;
-  width: 30%;
+  width: 100%;
   max-width: 200px;
   height: 30px;
   color: #ffffff;
@@ -49,4 +49,11 @@ margin-right: 10px;
   box-shadow: 2px 5px 20px 0px rgba(0, 0, 0, 0.20);
   cursor: pointer;
   
+}
+.topnav .contestheader{
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 30px;
+  width: 30%;
 }

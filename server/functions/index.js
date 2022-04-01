@@ -626,6 +626,24 @@ app.post("/getusercredits", (req, res) => {
 		});
 });
 
+app.post("/getcredits", (req, res) => {
+	var idToken = req.body.idToken;
+	var contestid = req.body.contestid;
+	var username;
+	var data = {}
+	getGithubData(idToken)
+		.then((data) => getUsername(data))
+		.then((result) => {
+			username = result;
+		})
+		.then(() => getUserCredits(username, contestid))
+		.then((result) => {
+			data["credits"] = result;
+			res.json(data);
+		})
+
+});
+
 function getUserCredits(username, contestid) {
 	return new Promise((resolve, reject) => {
 		var credits = 0;
@@ -834,7 +852,6 @@ function getRepositoryId(user, repo, repositories) {
 }
 
 function getVotes(contestid, pullrequests) {
-	console.log("getvotes");
 	return new Promise((resolve, reject) => {
 		var refVotes = db.ref("/votes/" + contestid);
 		refVotes.once("value", function (snapshot) {

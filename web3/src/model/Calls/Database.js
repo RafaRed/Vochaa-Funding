@@ -15,7 +15,8 @@ import {
 	getcontest_path,
 	exportcontest_path,
 	updatecontest_path,
-	getvoters_path
+	getvoters_path,
+	credits_path
 } from "../repository";
 import moment from "moment";
 import { getIdToken, getUsername } from "./Auth";
@@ -279,6 +280,21 @@ export async function getVoters(contestid,repositoryid,pullrequestid) {
 	};
 	return new Promise((resolve, reject) => {
 		fetch(server + getvoters_path, requestOptions)
+			.then((response) => response.json())
+			.then((data) => resolve(data));
+	});
+}
+
+export async function getUserCredits(contestid) {
+	var idToken = await getIdToken();
+	var data = { contestid: contestid, idToken:idToken };
+	const requestOptions = {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify(data),
+	};
+	return new Promise((resolve, reject) => {
+		fetch(server + credits_path, requestOptions)
 			.then((response) => response.json())
 			.then((data) => resolve(data));
 	});

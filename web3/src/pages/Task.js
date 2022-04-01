@@ -8,7 +8,12 @@ import moment from "moment";
 import ReactMarkdown from "react-markdown";
 import seedrandom from "seedrandom";
 import "../css/Task.css";
-import { backButton } from "../utils/utils";
+import { backButton, fetchContestCredits } from "../utils/utils";
+import { auth, provider } from "../model/firebaseConnect";
+import {
+	onAuthStateChanged,
+} from "firebase/auth";
+
 
 var formatter = new Intl.NumberFormat("de-DE", {
 	style: "currency",
@@ -21,6 +26,7 @@ function Task(props) {
 	const [listview, setListView] = useState(true);
 	const [search, setSearch] = useState();
 	const [votesList, setVotesList] = useState({});
+	const [userCredits, setUserCredits] = useState()
 	const [tasks, setTasks] = useState({
 		name: "Task Name",
 		description: "Task description",
@@ -31,11 +37,18 @@ function Task(props) {
 		loadVotes(params.contest, params.task, setVotesList);
 		loadTask(params, setTasks);
 	}, []);
+	useEffect(() => {
+		onAuthStateChanged(auth, (currentUser) => {
+			fetchContestCredits(params.contest,setUserCredits)
+			console.log(userCredits)
+		});
+	}, []);
+
 	var seed = 741852963;
 
 	return (
 		<>
-			<Navbar menu="explore" username={username} setUsername={setUsername} />
+			<Navbar menu="explore" username={username} setUsername={setUsername} userCredits={userCredits} />
 			<div className="task">
 				<div className="wrapper">
 					<div
@@ -199,7 +212,7 @@ function searchCointains(string, search) {
 function PullRequestTable(params, task, votes, percentage, valueMatch) {
 	return (
 		<div className="pr" key={task.pr}>
-			<p className="pr-id">#{task.pr}</p>
+			<p className="pr-id"><a className="list-pr-author" href={task.url}>#{task.pr}</a></p>
 			<p className="pr-name">{task.title}</p>
 			<div className="pr-info">
 				<p>by</p>
@@ -241,10 +254,11 @@ function PullRequestTable(params, task, votes, percentage, valueMatch) {
 }
 
 function PullRequestList(params, task, votes, percentage, valueMatch) {
+	console.log(task)
 	return (
 		<div className="list-pr" key={task.pr}>
 			<div className="list-pr-info">
-				<p className="list-pr-id">#{task.pr}</p>
+				<p className="list-pr-id"><a className="list-pr-author" href={task.url}>#{task.pr}</a></p>
 				<p className="nowrap">
 					by{" "}
 					<a className="list-pr-author" href={"https://github.com/" + task.user}>
