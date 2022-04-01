@@ -18,7 +18,7 @@ var formatter = new Intl.NumberFormat("de-DE", {
 function Task(props) {
 	const [username, setUsername] = useState("");
 	const params = useParams();
-
+	const [listview, setListView] = useState(true);
 	const [search, setSearch] = useState();
 	const [votesList, setVotesList] = useState({});
 	const [tasks, setTasks] = useState({
@@ -38,7 +38,9 @@ function Task(props) {
 			<Navbar menu="explore" username={username} setUsername={setUsername} />
 			<div className="task">
 				<div className="wrapper">
-				<div onClick={()=>backButton("../tasks")} className={["back-button",props.classes.button].join(' ')}>
+					<div
+						onClick={() => backButton("../tasks")}
+						className={["back-button", props.classes.button].join(" ")}>
 						<img src="/images/back.png"></img>
 						<p>BACK</p>
 					</div>
@@ -72,23 +74,35 @@ function Task(props) {
 							</h2>
 						</div>
 					</div>
-					<div className="search-bar">
-						<input
-							type="text"
-							id="fname"
-							name="fname"
-							className="block-input"
-							onChange={(val) => setSearch(val.target.value)}
-						/>
-						<img src="/images/search.png" />
+					<div className="searchbar-toggle">
+						<div className="search-bar">
+							<input
+								type="text"
+								id="fname"
+								name="fname"
+								className="block-input"
+								onChange={(val) => setSearch(val.target.value)}
+							/>
+							<img src="/images/search.png" />
+						</div>
+						<div className="toggle-button">
+								<div onClick={()=>setListView(false)} className={["tableview",listview?"not-toggled":"toggled"].join(' ')}>
+									<img src="/images/grid.png"></img>
+								</div>
+								<div onClick={()=>setListView(true)} className={["listview",listview?"toggled":"not-toggled"].join(' ')}>
+								<img src="/images/list.png"></img>
+								</div>
+						</div>
 					</div>
-					<div className="board">
+
+					<div className={listview ? "listboard" : "tableboard"}>
 						<FetchPullRequests
 							params={params}
 							tasks={tasks}
 							search={search}
 							seed={seed}
-							votesList={votesList}></FetchPullRequests>
+							votesList={votesList}
+							listview={listview}></FetchPullRequests>
 					</div>
 				</div>
 			</div>
@@ -100,7 +114,14 @@ function loadTask(params, setTasks) {
 	getTask(params.contest, params.task).then((data) => setTasks(data));
 }
 
-function FetchPullRequests({ params, tasks, search, seed, votesList }) {
+function FetchPullRequests({
+	params,
+	tasks,
+	search,
+	seed,
+	votesList,
+	listview,
+}) {
 	var taskList = [];
 	var rng = seedrandom(seed);
 
@@ -129,9 +150,27 @@ function FetchPullRequests({ params, tasks, search, seed, votesList }) {
 				}
 
 				//console.log("result:"+votes,percentage,valueMatch,tasks.pullrequests[i]['pr'])
-				taskList.push(
-					PullRequest(params, tasks.pullrequests[i], votes, percentage, valueMatch)
-				);
+				if (listview) {
+					taskList.push(
+						PullRequestList(
+							params,
+							tasks.pullrequests[i],
+							votes,
+							percentage,
+							valueMatch
+						)
+					);
+				} else {
+					taskList.push(
+						PullRequestTable(
+							params,
+							tasks.pullrequests[i],
+							votes,
+							percentage,
+							valueMatch
+						)
+					);
+				}
 			}
 		}
 	}
@@ -157,7 +196,7 @@ function isOnSearch(task, search) {
 function searchCointains(string, search) {
 	return string.toLowerCase().startsWith(search.toLowerCase());
 }
-function PullRequest(params, task, votes, percentage, valueMatch) {
+function PullRequestTable(params, task, votes, percentage, valueMatch) {
 	return (
 		<div className="pr" key={task.pr}>
 			<p className="pr-id">#{task.pr}</p>
@@ -174,7 +213,7 @@ function PullRequest(params, task, votes, percentage, valueMatch) {
 			<div className="divider"></div>
 
 			<div className="vote-status" key={0}>
-			<div className="vote-status-match">
+				<div className="vote-status-match">
 					<p>
 						<b>Reward</b>
 					</p>
@@ -191,16 +230,62 @@ function PullRequest(params, task, votes, percentage, valueMatch) {
 						className="progress-bar-status"
 						style={{ width: percentage + "%" }}></div>
 				</div>
-
-				
 			</div>
 			<a
 				className="view-button-wrapper"
 				href={"/contest/" + params.contest + "/" + params.task + "/" + task.pr}>
 				<p className="view-button">View More</p>
 			</a>
+		</div>
+	);
+}
 
+function PullRequestList(params, task, votes, percentage, valueMatch) {
+	return (
+		<div className="list-pr" key={task.pr}>
+			<div className="list-pr-info">
+				<p className="list-pr-id">#{task.pr}</p>
+				<p className="nowrap">
+					by{" "}
+					<a className="list-pr-author" href={"https://github.com/" + task.user}>
+						{task.user}
+					</a>
+				</p>
 
+				<p className="nowrap">{task.created}</p>
+			</div>
+			<p className="list-pr-name">{task.title}</p>
+			<div className="vote-data">
+				<div className="list-vote-status" key={0}>
+					<div className="list-vote-info">
+						<div className="list-vote-status-header">
+							<p>{votes} votes </p>
+							<p>{Math.round(percentage)}%</p>
+						</div>
+
+						<div className="list-progress-bar">
+							<div
+								className="list-progress-bar-status"
+								style={{ width: percentage + "%" }}></div>
+						</div>
+					</div>
+					<div className="list-vote-status-match">
+						<p className="reward-text">
+							<span>
+								<b>Reward</b>
+							</span>
+						</p>
+						<p className="reward-text">
+							<span>{valueMatch}</span>
+						</p>
+					</div>
+				</div>
+				<a
+					className="view-button-wrapper"
+					href={"/contest/" + params.contest + "/" + params.task + "/" + task.pr}>
+					<p className="list-view-button">View More & Vote</p>
+				</a>
+			</div>
 		</div>
 	);
 }

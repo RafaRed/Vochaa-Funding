@@ -46,7 +46,6 @@
 	}
 }
 
-
 @media only screen and (max-width: 550px) {
 	.task .task-data {
 		width: 100%;
@@ -54,7 +53,6 @@
 		flex-direction: column;
 		justify-content: center;
 		text-align: center;
-
 	}
 }
 
@@ -76,7 +74,7 @@
 	}
 }
 
-.task .board {
+.task .tableboard {
 	display: flex;
 	flex-wrap: wrap;
 	margin-top: 30px;
@@ -84,9 +82,17 @@
 	gap: 60px;
 }
 
+.task .listboard {
+	display: flex;
+	flex-direction: column;
+	margin-top: 30px;
+	display: flex;
+	gap: 5px;
+}
+
 .task .pr {
 	width: 20%;
-    min-width: 300px;
+	min-width: 300px;
 
 	background-color: #fff;
 	border-radius: 10px;
@@ -98,7 +104,7 @@
 	font-size: 1.2rem;
 }
 .task .pr-name {
-    width: 100%;
+	width: 100%;
 	font-weight: 700;
 	font-size: 1.2rem;
 	white-space: nowrap;
@@ -110,33 +116,33 @@
 	gap: 5px;
 	margin-bottom: 10px;
 }
-.task .pr-author{
-    color:#3191ff;
+.task .pr-author {
+	color: #3191ff;
 }
-.task .pr-repository{
-    color:#3191ff;
+.task .pr-repository {
+	color: #3191ff;
 }
-.task .pr-contributors{
-    margin-bottom: 10px;
+.task .pr-contributors {
+	margin-bottom: 10px;
 }
-.task .divider{
-    background-color: #e4e4e4;
-    height: 1px;
-    width: 100%;
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
+.task .divider {
+	background-color: #e4e4e4;
+	height: 1px;
+	width: 100%;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
 
 .task .pr-description {
-    width: 100%;
-    height: 20%;
-    margin-top: 20px;
+	width: 100%;
+	height: 20%;
+	margin-top: 20px;
 	margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 .task .pr-from {
 	margin-bottom: 10px;
@@ -156,8 +162,7 @@
 .task .search-bar {
 	width: 31%;
 
-	margin-top: 60px;
-	margin-bottom: 20px;
+
 	background-color: #ececec;
 	border: none;
 	border-radius: 10px;
@@ -207,7 +212,7 @@
 	margin-top: 20px;
 
 	width: 100%;
-	
+
 	height: 40px;
 	border-radius: 10px;
 	border: none;
@@ -233,41 +238,39 @@
 	text-decoration: none;
 }
 
-.task .vote-status-header{
-    
-    display: flex;
+.task .vote-status-header {
+	display: flex;
 	width: 100%;
-    margin-right: 30px;
-    justify-content: space-between;
-    font-weight: 700;
+	margin-right: 30px;
+	justify-content: space-between;
+	font-weight: 700;
 }
 
-.task .vote-status-match{
-    
-    display: flex;
+.task .vote-status-match {
+	display: flex;
 	flex-direction: column;
 	margin-bottom: 10px;
-    margin-right: 30px;
-    justify-content: space-between;
+	margin-right: 30px;
+	justify-content: space-between;
 }
 
-.task .vote-status .progress-bar{
-    border-radius: 10px;
+.task .vote-status .progress-bar {
+	border-radius: 10px;
 	width: 100%;
-    background-color: #E5E5E5;
-    margin-bottom: 20px;
-    height: 10px;
+	background-color: #e5e5e5;
+	margin-bottom: 20px;
+	height: 10px;
 }
 
-.task .vote-status .progress-bar-status{
+.task .vote-status .progress-bar-status {
 	width: 100%;
-    border-radius: 10px;
-    background-color: #10D654;
-    margin-bottom: 20px;
-    height: 10px;
+	border-radius: 10px;
+	background-color: #10d654;
+	margin-bottom: 20px;
+	height: 10px;
 }
 
-.task .back-button{
+.task .back-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -283,7 +286,196 @@
 	cursor: pointer;
 	user-select: none;
 }
-.task .back-button img{
+.task .back-button img {
 	width: 15px;
 	height: 15px;
+}
+
+.task .list-pr {
+	display: flex;
+
+	min-width: 300px;
+	background-color: #fff;
+	border-radius: 10px;
+	padding: 10px;
+}
+
+.task .list-pr-id {
+	font-weight: 700;
+	font-size: 1.2vw;
+}
+
+.task .list-pr-name {
+	width: 100%;
+	font-weight: 700;
+	font-size: 1.2vw;
+	white-space: pre-wrap;
+}
+
+
+@media only screen and (max-width: 1200px) {
+	.task .list-pr-id {
+		font-size: 1.8vw;
+	}
+
+	.task .list-pr-name {
+		font-size: 1.8vw;
+	}
+}
+
+@media only screen and (max-width: 800px) {
+	.task .list-pr-id {
+		font-size: 3vw;
+	}
+
+	.task .list-pr-name {
+		font-size: 3vw;
+	}
+}
+
+.task .list-pr-info {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: nowrap;
+	gap: 5px;
+
+	margin-right: 20px;
+}
+.task .nowrap {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	white-space: pre;
+}
+.task .list-pr-author {
+	color: #3191ff;
+}
+.task .list-pr-repository {
+	color: #3191ff;
+}
+
+.task .list-vote-status-header {
+	display: flex;
+	width: 100%;
+	margin-right: 30px;
+	justify-content: space-between;
+	font-weight: 700;
+}
+@media only screen and (max-width: 800px) {
+	.task .list-vote-status-header{
+		width: auto;
+	}
+}
+
+.task .list-vote-status-match {
+	display: flex;
+	flex-direction: column;
+}
+
+.task .reward-text {
+	display: flex;
+	flex-direction: row;
+}
+.task .reward-text span {
+	margin-bottom: -5px;
+	align-self: flex-end;
+}
+
+.task .vote-data {
+	margin-left: 20px;
+	width: 40%;
+	display: flex;
+	flex-direction: column;
+}
+.task .list-vote-status {
+	display: flex;
+	gap: 30px;
+	min-width: 200px;
+	flex-direction: row;
+}
+@media only screen and (max-width: 800px) {
+	.task .list-vote-status{
+		min-width: 130px;
+		flex-direction: column;
+	}
+}
+
+.task .list-vote-info {
+	width: 100%;
+}
+.task .list-vote-status .list-progress-bar {
+	border-radius: 10px;
+
+	background-color: #e5e5e5;
+
+	height: 10px;
+}
+
+.task .list-vote-status .list-progress-bar-status {
+
+	border-radius: 10px;
+	background-color: #10d654;
+	height: 10px;
+}
+
+.task .list-view-button {
+
+	margin-top: 20px;
+	height: 30px;
+	line-height: 30px;
+	overflow: hidden;
+	border-radius: 10px;
+	border: none;
+	background-color: #3191ff;
+	color: #fff;
+	font-size: 16px;
+	font-weight: 700;
+	box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.2);
+}
+
+.task .searchbar-toggle{
+	display: flex;
+	justify-content: space-between;
+	margin-top: 60px;
+	margin-bottom: 20px;
+}
+.task .toggle-button{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	align-content: center;
+	border-radius: 10px;
+
+	
+}
+
+.task .tableview{
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	padding: 10px;
+	width: 30px;
+
+}
+.task .listview{
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	padding: 10px;
+	width: 30px;
+
+}
+
+.task .toggled{
+	background-color: #386EAC;
+
+
+}
+.task .not-toggled{
+	background-color: #0F253E;
+}
+
+
+.task .toggle-button img{
+	width: 25px;
+	height: 25px;
+	margin-bottom: -5px;
 }
