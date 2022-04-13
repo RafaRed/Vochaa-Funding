@@ -334,12 +334,12 @@
 }
 
 .task .list-pr-info {
+	min-width: 135px;
 	display: flex;
 	flex-direction: column;
 	flex-wrap: nowrap;
 	gap: 5px;
 
-	margin-right: 20px;
 }
 .task .nowrap {
 	display: flex;
