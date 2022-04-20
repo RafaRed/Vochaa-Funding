@@ -111,13 +111,16 @@ function LoadTasks({ params, taskList, setTaskList }) {
 		getPullRequests(params.contest).then((pullrequests) => {
 			
 			for (const [key, value] of Object.entries(pullrequests)) {
-				if(pullrequests[key].repository in repositories)
+				if(pullrequests[key].enabled === true){
+					if(pullrequests[key].repository in repositories)
 				{
 					repositories[pullrequests[key].repository] ++;
 				}
 				else{
 					repositories[pullrequests[key].repository] = 1;
 				}
+				}
+				
 			}
 
 			loadTasks(params.contest).then((tasks) => {

@@ -35,15 +35,17 @@
 	flex-direction: column;
 	flex-wrap: wrap;
 	white-space: pre-line;
+	overflow-x: scroll;
 	
 }
 
 pre{
+	margin-top: 10px;
 	background-color: #f0f0f0;
 	padding: 10px;
 	border-radius: 10px;
 	white-space: pre-wrap;
-	word-break: break-all;
+
 }
 .proposal .description p{
 	width: 100%;
