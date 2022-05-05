@@ -158,6 +158,9 @@ function StaticData(contest, formatter, setEdit, edit, params, csvLink, setCsvDa
 					<button className="edit" onClick={() => exportData(params.contest, csvLink,setCsvData)}>
 						Export
 					</button>
+					<button className="edit" onClick={() => exportVotes(params.contest, csvLink,setCsvData)}>
+						Export Votes
+					</button>
 				</div>
 			</div>
 			<div className="content conteiner">
@@ -277,6 +280,36 @@ function exportData(contestid, csvLink,setCsvData) {
 		csvLink.current.link.click()
 	});
 }
+
+function exportVotes(contestid, csvLink,setCsvData) {
+	getExportData(contestid).then((contestData) => {
+		var csvData = []
+		var header = ["pr_id","pr_voter","number_votes","credit_cost"]
+		csvData.push(header)
+		for (const [repo_key, repo_value] of Object.entries(contestData.pullrequests)) {
+			for (const [pullrequest_key, pullrequest_value] of Object.entries(contestData.pullrequests[repo_key])) {
+				var pr = contestData.pullrequests[repo_key][pullrequest_key]
+				var pr_voters = ""
+				var separator = ""
+				if(pr.voters !== undefined && pr.voters !== null){
+					for (const [voter_key, voter_value] of Object.entries(pr.voters)) {
+						pr_voters += separator+voter_key+":"+voter_value
+						separator = ","
+						var prData = [pr.pr,voter_key,voter_value,voter_value*voter_value]
+						csvData.push(prData)
+					}
+				}
+				
+
+
+				
+			}
+		}
+		setCsvData(csvData)
+		csvLink.current.link.click()
+	});
+}
+
 function CheckboxController(e, setPullrequests, pullrequests) {
 	var checked = e.target.checked;
 	const temp_state = [...pullrequests];
